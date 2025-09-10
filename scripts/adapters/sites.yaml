@@ -1,0 +1,41 @@
+afr.com:
+  modes: [crawl, search]
+  urls:
+    - https://www.afr.com/
+  search:
+    url_template: "https://www.afr.com/search?text={query}&page={page}"
+    page_start: 1
+    page_stop: 3
+  selectors:
+    item: "article, .StoryFeedItem"
+    title: "h3, h2"
+    url: "a::attr(href)"
+    date: "time::attr(datetime)"
+    snippet: "p, .Summary"
+  throttle:
+    request_interval_ms: 1200
+    concurrent: 1
+  headline_element:
+    - class: "-ab8f2fe08e9b6a8e-headlineLink"
+      tag: "a"
+    - class: "_1d279feefd70c2a3-suppressVisite"
+      tag: "a"
+    - class: "-_73414cb90844eda9-headlineLink"
+      tag: "a"
+    - class: "-c3f4d1ccb2028ee7-headlineLink"
+      tag: "a"
+    - class: "-_3294044e947c2366-headlineLink"
+      tag: "a"
+    - class: "-ef1ae07e8d6cc5ff-headlineLink"
+      tag: "a"
+    - class: "-_8ccb589c2342f5d9-headlineLink"
+      tag: "a"
+    - class: "-ad45886ca92acb6e-headlineLink"
+      tag: "a"
+    - class: "-_4278fd552845f3cf-headlineLink"
+      tag: "a"
+    - class: "-_05900c6f610ad99c-headlineLink"
+      tag: "a"
+  
+theautralian:  
+
