@@ -1,17 +1,19 @@
 afr.com:
-  modes: [crawl, search]
+  modes: [search]
   urls:
     - https://www.afr.com/
   search:
     url_template: "https://www.afr.com/search?text={query}&page={page}"
     page_start: 1
-    page_stop: 3
+    page_stop: 1
   selectors:
-    item: "article, .StoryFeedItem"
-    title: "h3, h2"
-    url: "a::attr(href)"
-    date: "time::attr(datetime)"
-    snippet: "p, .Summary"
+    item: "div[data-testid='StoryTileBase']"              # Whole story tile container
+    title: "h3[data-testid='StoryTileHeadline-h3']"       # Headline text
+    url: "h3[data-testid='StoryTileHeadline-h3'] a::attr(href)"  # Link inside headline
+    snippet: "p[data-pb-type='ab']"                      # Article summary paragraph
+    date: "time[data-testid='StoryTile-Timestamp']::attr(datetime)"  # Published date
+    author: "li[data-testid='StoryTile-Byline']"          # Author name
+    image: "img[data-testid='Image-image']::attr(src)"
   throttle:
     request_interval_ms: 1200
     concurrent: 1
@@ -37,5 +39,190 @@ afr.com:
     - class: "-_05900c6f610ad99c-headlineLink"
       tag: "a"
   
-theautralian:  
+theaustralian: 
+  modes: [search]
+  urls:
+    - https://www.theaustralian.com.au/ 
+  search:
+    url_template: "https://www.theaustralian.com.au/search-results?q={query}"
+    page_start: 1
+    page_stop: 1  
+  selectors:
+    item: "article.storyblock"                    # Main container for each article
+    title: "h4.storyblock_title a"                # Headline text
+    url: "h4.storyblock_title a::attr(href)"      # Article link
+    snippet: "p.storyblock_standfirst a"          # Summary/standfirst text
+    date: "time.storyblock_datetime::attr(datetime)"  # Date string
+    image: "img.storyblock_img::attr(src)"        # Thumbnail image
+    section: "span.storyblock_meta a"     
+  headline_element:
+    - class: "storyblock_title_link"
+      tag: "a"
+    
+news.com:
+  modes: [search]
+  urls:
+    - https://www.news.com.au/
+  search:
+    url_template: "https://www.news.com.au/search-results?q={query}"
+    page_start: 1
+    page_stop: 1 
+  selectors:
+    item: "article.storyblock"                    # Each article container
+    title: "h4.storyblock_title a"                # Headline text
+    url: "h4.storyblock_title a::attr(href)"      # Article link
+    snippet: "p.storyblock_standfirst a"          # Standfirst/summary text
+    date: "time.storyblock_datetime::attr(datetime)"  # Publication date
+    image: "img.storyblock_img::attr(src)"        # Thumbnail image
+    section: "span.storyblock_meta a"       
+  headline_element:
+    - class: "storyblock_title_link"
+      tag: "a"
 
+smh:
+  modes: [search]
+  urls:
+    - https://www.smh.com.au/
+  search:
+    url_template: "https://www.smh.com.au/search?text={query}&page={page}"
+    page_start: 1
+    page_stop: 10  
+  selectors:
+    item: "div.-VZEV"                              # Outer container for each article
+    title: "h3[data-testid='article-headline']"     # Headline text
+    url: "h3[data-testid='article-headline'] a::attr(href)"  # Link inside headline
+    snippet: "p[data-pb-type='ab']"                # Article summary paragraph
+    date: "time[data-testid='datetime']::attr(datetime)"  # ISO date
+    author: "span[data-testid='byline']"       
+  headline_element:
+    - data-testid: "article-link"
+      tag: "a"
+
+theage:
+  modes: [search]
+  urls:
+    - https://www.theage.com.au/
+  search:
+    url_template: "https://www.theage.com.au/search?text={query}&page={page}"
+    page_start: 1
+    page_stop: 10
+  selectors:
+    item: "div.-VZEV"
+    title: "h3[data-testid='article-headline']"
+    url: "h3[data-testid='article-headline'] a::attr(href)"
+    snippet: "p[data-pb-type='ab']"
+    date: "time[data-testid='datetime']::attr(datetime)"
+    author: "span[data-testid='byline']"
+
+brisbanetimes:
+  modes: [search]
+  urls:
+    - https://www.brisbanetimes.com.au/
+  search:
+    url_template: "https://www.brisbanetimes.com.au/search?text={query}"
+    page_start: 1
+    page_stop: 10   
+  selectors:
+    item: "div.u61GA"                        # Each story tile container
+    title: "h3.GdDu- a"                      # Headline text
+    url: "h3.GdDu- a::attr(href)"            # Article link (relative, normalize later)
+    snippet: "p.RqAbQ"                       # Summary / standfirst
+    date: "time.xt6gv::attr(datetime)"       # Publication date (ISO format, parseable)
+    section: "h5.iWYrW a"                    # Section name (e.g., Aviation)
+    author: "span[data-testid='byline']"     # Author name
+    image: "picture img::attr(src)"  
+
+canberratimes:
+  modes: [crawl]
+  urls:
+    - https://www.canberratimes.com.au/
+  headline_element:
+    - class: "break-words"
+      tag: "a"
+  
+skynews:
+  modes: [search]
+  urls:
+    - https://www.skynews.com.au/
+  search:
+    url_template: "https://www.skynews.com.au/search-results/?q={query}"
+    page_start: 1
+    page_stop: 1  
+  selectors:
+    item: "article.storyblock"                        # Each article container
+    title: "h4.storyblock_title a.storyblock_title_link"
+    url: "h4.storyblock_title a.storyblock_title_link::attr(href)"
+    snippet: "p.storyblock_standfirst"                # Short summary / standfirst
+    date: "time.storyblock_datetime::attr(datetime)"  # Date (d/m/yyyy)
+    image: "img.storyblock_img::attr(src)"            # Thumbnail image
+    section: "span.storyblock_meta a"
+
+abc:
+  modes: [search]
+  urls:
+    - https://www.abc.net.au/news/
+  search:
+    url_template: "https://www.abc.net.au/news/search?query={query}"
+    page_start: 1
+    page_stop: 1   
+  selectors:
+    item: "article[data-component='SearchCard']"                     # Each article container
+    title: "h3.SearchCard_heading__nzIzp a"                          # Article title link
+    url: "h3.SearchCard_heading__nzIzp a::attr(href)"                # Article URL
+    snippet: "div.SearchCard_synopsis__HhlrY"                        # Short summary / snippet
+    date: "time.DynamicTimestamp_printDate__OVPa2::attr(datetime)"   # ISO date
+    image: "div.Thumbnail_mediaThumbnail__U4Q53 img::attr(src)"      # Thumbnail image
+    section: "a[data-component='PrimaryContextTag']"
+
+businessnewsaustralia:
+  modes: [search]
+  urls:
+    - https://www.businessnewsaustralia.com/
+  search:
+    url_template: "https://www.businessnewsaustralia.com/search.html?s={query}"
+    page_start: 1
+    page_stop: 1      
+  selectors:
+    item: "div.BNA-article"                               # Each article container
+    title: "h2.articleListHeading a"                      # Article title link
+    url: "h2.articleListHeading a::attr(href)"            # Article URL
+    snippet: "div.articleListCrop p"                      # Short summary / snippet
+    date: ""                                              # No date present in this snippet
+    image: "div.article-image img::attr(src)"             # Thumbnail image
+    section: ""             
+
+smartcompany:
+  modes: [search]
+  urls:
+    - https://www.smartcompany.com.au/
+  search:
+    url_template: "https://www.smartcompany.com.au/?s={query}"
+    page_start: 1
+    page_stop: 1      
+  selectors:
+    item: "article.unit-article"                        # Each article container
+    title: "h3.title"                                   # Article title
+    url: "div.unit-article__content__post-data a::attr(href)"  # Article URL
+    snippet: "p.excerpt"                                # Short summary / snippet
+    date: "time.post-date::attr(datetime)"              # Date (ISO format)
+    image: "div.unit-article__image img::attr(src)"     # Thumbnail image
+    section: "div.unit-article__content__labels a p"    # Section / label
+         
+stockhead:
+  modes: [search]
+  urls:
+    - https://stockhead.com.au/
+  search:
+    url_template: "https://stockhead.com.au/?s={query}"
+    page_start: 1
+    page_stop: 1  
+  selectors:
+    item: "article.article-item"                               # Each article container
+    title: "h2.latest__article__title a"                       # Article title text
+    url: "h2.latest__article__title a::attr(href)"             # Article link
+    snippet: null                                              # No snippet available in this structure
+    date: "time.meta__time::attr(datetime)"                    # Publication date (ISO format)
+    image: "div.article-item__image-wrapper img::attr(src)"    # Article thumbnail image
+    section: "a.meta__category"                               # Category (e.g. Tech)
+    author: "a.meta__author"                                  # Author name
+   
