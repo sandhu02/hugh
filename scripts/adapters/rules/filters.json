@@ -1,5 +1,6 @@
 {
-  "insolvency_related": [
+  "keywords":
+  [
     "insolvency",
     "liquidation",
     "receivership",
@@ -8,43 +9,33 @@
     "winding up",
     "restructuring",
     "covenant breach",
-    "bankruptcy"
-  ],
-  "legal_related": [
+    "bankruptcy",
     "lawsuit",
     "legal action",
     "class action",
     "investigation",
     "regulatory action",
     "probe",
-    "court"
-  ],
-  "leadership_changes": [
+    "court",
     "ceo resign",
     "cfo resign",
     "chairman resign",
     "steps down",
     "leadership shakeup",
-    "executive exit"
-  ],
-  "financial_red_flags": [
+    "executive exit",
     "profit warning",
     "earnings downgrade",
     "going concern",
     "capital raise",
     "cash burn",
     "guidance miss",
-    "credit downgrade"
-  ],
-  "operations_related": [
+    "credit downgrade",
     "closure",
     "shutdown",
     "redundancy",
     "layoffs",
     "staff cuts",
-    "site closure"
-  ],
-  "disputes_and_complaints": [
+    "site closure",
     "customer complaint",
     "refund issue",
     "failed acquisition",

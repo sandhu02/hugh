@@ -1,5 +1,5 @@
 afr.com:
-  modes: [search]
+  modes: [home_fetch]
   urls:
     - https://www.afr.com/
   search:
@@ -40,7 +40,7 @@ afr.com:
       tag: "a"
   
 theaustralian: 
-  modes: [search]
+  modes: [home_fetch]
   urls:
     - https://www.theaustralian.com.au/ 
   search:
@@ -60,7 +60,7 @@ theaustralian:
       tag: "a"
     
 news.com:
-  modes: [search]
+  modes: [home_fetch]
   urls:
     - https://www.news.com.au/
   search:
@@ -80,7 +80,7 @@ news.com:
       tag: "a"
 
 smh:
-  modes: [search]
+  modes: [home_fetch]
   urls:
     - https://www.smh.com.au/
   search:
@@ -88,18 +88,19 @@ smh:
     page_start: 1
     page_stop: 10  
   selectors:
-    item: "div.-VZEV"                              # Outer container for each article
-    title: "h3[data-testid='article-headline']"     # Headline text
-    url: "h3[data-testid='article-headline'] a::attr(href)"  # Link inside headline
-    snippet: "p[data-pb-type='ab']"                # Article summary paragraph
-    date: "time[data-testid='datetime']::attr(datetime)"  # ISO date
-    author: "span[data-testid='byline']"       
+    item: "div[data-testid='story-tile']"        # container for article
+    title: "h3[data-testid='article-headline']"
+    url: "h3[data-testid='article-headline'] a::attr(href)"
+    snippet: "p[data-pb-type='ab']"
+    date: "time[data-testid='datetime']::attr(datetime)"
+    author: "span[data-testid='byline']"
+    image: "figure img::attr(src)"
   headline_element:
     - data-testid: "article-link"
       tag: "a"
 
 theage:
-  modes: [search]
+  modes: [home_fetch]
   urls:
     - https://www.theage.com.au/
   search:
@@ -107,15 +108,19 @@ theage:
     page_start: 1
     page_stop: 10
   selectors:
-    item: "div.-VZEV"
-    title: "h3[data-testid='article-headline']"
-    url: "h3[data-testid='article-headline'] a::attr(href)"
-    snippet: "p[data-pb-type='ab']"
-    date: "time[data-testid='datetime']::attr(datetime)"
-    author: "span[data-testid='byline']"
+    item: "div[data-testid='story-tile']"                # The main card container
+    title: "h3[data-testid='article-headline'] a"        # Headline link
+    url: "h3[data-testid='article-headline'] a::attr(href)"  # Article URL
+    snippet: "p[data-pb-type='ab']"                     # Short article abstract/summary
+    topic: "h5 a"   
+    date: ""                                        # Not present in this layout
+    section: "h5 a"                                 # Section name (e.g., Epstein fallout)
+    author: ""                                              # Topic / section name (optional)
+    image: "figure img::attr(src)"                      # Thumbnail image
+
 
 brisbanetimes:
-  modes: [search]
+  modes: [home_fetch]
   urls:
     - https://www.brisbanetimes.com.au/
   search:
@@ -123,25 +128,36 @@ brisbanetimes:
     page_start: 1
     page_stop: 10   
   selectors:
-    item: "div.u61GA"                        # Each story tile container
-    title: "h3.GdDu- a"                      # Headline text
-    url: "h3.GdDu- a::attr(href)"            # Article link (relative, normalize later)
-    snippet: "p.RqAbQ"                       # Summary / standfirst
-    date: "time.xt6gv::attr(datetime)"       # Publication date (ISO format, parseable)
-    section: "h5.iWYrW a"                    # Section name (e.g., Aviation)
-    author: "span[data-testid='byline']"     # Author name
-    image: "picture img::attr(src)"  
+    item: "div[data-testid='story-tile']"           # Each story tile container
+    title: "h3[data-testid='article-headline'] a"   # Headline text
+    url: "h3[data-testid='article-headline'] a::attr(href)"  # Article link (relative, normalize later)
+    snippet: "p[data-pb-type='ab']"                 # Summary / standfirst
+    date: ""                                        # Not present in this layout
+    section: "h5 a"                                 # Section name (e.g., Epstein fallout)
+    author: ""                                      # No author listed on card
+    image: "figure img::attr(src)"                  # Thumbnail image
+
 
 canberratimes:
-  modes: [crawl]
+  modes: [home_fetch]
   urls:
     - https://www.canberratimes.com.au/
+  selectors:
+    item: "div[data-testid='headline']"                # Each story container
+    title: "a.custom-chartbeat-headline-test"          # Headline text
+    url: "a.custom-chartbeat-headline-test::attr(href)" # Full article URL
+    snippet: ""                                        # No snippet/standfirst in this layout
+    date: ""                                           # Date not present in card
+    section: "div[data-testid='rendered-signpost']"    # Section name (e.g., Property)
+    author: "span[data-testid='headline-author']"      # Author name
+    image: "picture img::attr(src)"                    # Thumbnail image
+  
   headline_element:
     - class: "break-words"
       tag: "a"
   
 skynews:
-  modes: [search]
+  modes: [home_fetch]
   urls:
     - https://www.skynews.com.au/
   search:
@@ -158,7 +174,7 @@ skynews:
     section: "span.storyblock_meta a"
 
 abc:
-  modes: [search]
+  modes: [home_fetch]
   urls:
     - https://www.abc.net.au/news/
   search:
@@ -166,16 +182,18 @@ abc:
     page_start: 1
     page_stop: 1   
   selectors:
-    item: "article[data-component='SearchCard']"                     # Each article container
-    title: "h3.SearchCard_heading__nzIzp a"                          # Article title link
-    url: "h3.SearchCard_heading__nzIzp a::attr(href)"                # Article URL
-    snippet: "div.SearchCard_synopsis__HhlrY"                        # Short summary / snippet
-    date: "time.DynamicTimestamp_printDate__OVPa2::attr(datetime)"   # ISO date
-    image: "div.Thumbnail_mediaThumbnail__U4Q53 img::attr(src)"      # Thumbnail image
-    section: "a[data-component='PrimaryContextTag']"
+    item: "article[data-component='TopStoriesCard']"      # Outer container for each top story card
+    title: "h3 a"                                        # Headline text link
+    url: "h3 a::attr(href)"                              # Link to article
+    snippet: ""                                          # No snippet/summary present in this card
+    date: ""                                             # No date inside card (needs article page fetch)
+    author: ""                                           # No author listed in card
+    image: "div[data-component='Thumbnail'] img::attr(src)"  # Thumbnail image URL
+    section: "div.TopStoriesCard_tag__3BYDF p"           # Section/topic name (e.g., Defence Forces)
+
 
 businessnewsaustralia:
-  modes: [search]
+  modes: [home_fetch]
   urls:
     - https://www.businessnewsaustralia.com/
   search:
@@ -192,7 +210,7 @@ businessnewsaustralia:
     section: ""             
 
 smartcompany:
-  modes: [search]
+  modes: [home_fetch]
   urls:
     - https://www.smartcompany.com.au/
   search:
@@ -200,16 +218,18 @@ smartcompany:
     page_start: 1
     page_stop: 1      
   selectors:
-    item: "article.unit-article"                        # Each article container
-    title: "h3.title"                                   # Article title
-    url: "div.unit-article__content__post-data a::attr(href)"  # Article URL
-    snippet: "p.excerpt"                                # Short summary / snippet
-    date: "time.post-date::attr(datetime)"              # Date (ISO format)
-    image: "div.unit-article__image img::attr(src)"     # Thumbnail image
-    section: "div.unit-article__content__labels a p"    # Section / label
+    item: "article.flex.flex-col"                       # Outer container for each article
+    title: "h2"                                         # Article headline
+    url: "a.block::attr(href)"                          # Main link wrapping the title
+    snippet: "p.mt-4"                                   # Summary paragraph
+    date: "time::attr(datetime)"                        # ISO date
+    author: "a[rel='author']"                           # Author name
+    image: "img::attr(src)"                             # Article image
+    section: "div.flex.flex-wrap a p"                   # Category/section text
+
          
 stockhead:
-  modes: [search]
+  modes: [home_fetch]
   urls:
     - https://stockhead.com.au/
   search:
