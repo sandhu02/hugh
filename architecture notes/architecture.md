@@ -1,7 +1,8 @@
 /scripts/
   engine/
     crawl.py                # Or Scrapy spiders entry
-    fetchers.py             # RSS, search, sitemap, static HTML
+    searchers.py             # RSS, search, sitemap, static HTML
+    home_fetch.py
     normalize.py            # title/url/date/snippet cleanup
     rules.py                # keyword & scoring
     dedupe.py               # URL+title hashing

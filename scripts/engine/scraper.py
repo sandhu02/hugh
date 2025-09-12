@@ -21,7 +21,6 @@ with open(filters_path, "r", encoding="utf-8") as f:
 
 keywords = filters.get("keywords", [])
 
-
 for site_name, site_config in config.items():
     csv_filename = f"{site_name}.csv"
     csv_path = os.path.join(STORAGE_DIR, csv_filename)
@@ -60,12 +59,12 @@ for site_name, site_config in config.items():
 
             elif mode == "home_fetch":
                 try:
-                    results = home_fetch(site_config)
+                    results = home_fetch(site_config , keywords)
                     for r in results:
                         try:
                             writer.writerow({
                                 "site": site_name,
-                                "keyword": "",  # no keyword in home_fetch mode
+                                "keyword": r.get("keywords"),
                                 "title": r.get("title"),
                                 "url": r.get("url"),
                                 "snippet": r.get("snippet"),

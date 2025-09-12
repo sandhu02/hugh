@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from get_element_value import get_element_value
+from filter import keywords_in_title
 
 
 HEADERS = {
@@ -15,7 +16,7 @@ HEADERS = {
     "Connection": "keep-alive",
 }
 
-def home_fetch(site_config):
+def home_fetch(site_config , keywords):
     results = []
 
     # --- Parse config ---
@@ -50,14 +51,21 @@ def home_fetch(site_config):
         if image and not image.startswith("http"):
             image = urljoin(base_url, image)
 
-        results.append({
-            "title": title,
-            "url": url,
-            "snippet": snippet,
-            "date": date,
-            "image": image,
-            "section": section
-        })   
+        found_keywords = keywords_in_title(title , keywords)
+
+        if (found_keywords):
+            keywords_str = ",".join(found_keywords)    # makes a comma separated string of keywords
+            news_headline = {
+                "keywords": keywords_str,
+                "title": title,
+                "url": url,
+                "snippet": snippet,
+                "date": date,
+                "image": image,
+                "section": section
+            } 
+
+            results.append(news_headline)   
 
     return results
      

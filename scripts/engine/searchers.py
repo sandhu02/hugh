@@ -23,7 +23,6 @@ HEADERS = {
 }
 
 
-
 def searcher(site_config, query=""):
     results = []
 
@@ -77,13 +76,3 @@ def searcher(site_config, query=""):
 
     return results
 
-
-# Example usage
-# if __name__ == "__main__":
-#     site_config = {
-#         'modes': ['search'], 'urls': ['https://stockhead.com.au/'], 'search': {'url_template': 'https://stockhead.com.au/?s={query}', 'page_start': 1, 'page_stop': 1}, 'selectors': {'item': 'article.article-item', 'title': 'h2.latest__article__title a', 'url': 'h2.latest__article__title a::attr(href)', 'snippet': None, 'date': 'time.meta__time::attr(datetime)', 'image': 'div.article-item__image-wrapper img::attr(src)', 'section': 'a.meta__category', 'author': 'a.meta__author'}
-#     }
-
-#     data = fetcher(site_config, query="startups")
-#     for d in data:
-#         print(d)
