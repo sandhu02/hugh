@@ -40,7 +40,7 @@ afr.com:
       tag: "a"
   
 theaustralian: 
-  modes: [home_fetch]
+  modes: [crawl]
   urls:
     - https://www.theaustralian.com.au/ 
   search:
@@ -60,7 +60,7 @@ theaustralian:
       tag: "a"
     
 news.com:
-  modes: [home_fetch]
+  modes: [crawl]
   urls:
     - https://www.news.com.au/
   search:
@@ -193,7 +193,7 @@ abc:
 
 
 businessnewsaustralia:
-  modes: [home_fetch]
+  modes: [crawl]
   urls:
     - https://www.businessnewsaustralia.com/
   search:
@@ -246,3 +246,178 @@ stockhead:
     section: "a.meta__category"                               # Category (e.g. Tech)
     author: "a.meta__author"                                  # Author name
    
+couriermail:
+  modes: [crawl]
+  urls:
+    - https://www.couriermail.com.au/
+  search:
+    url_template: 
+    page_start: 1
+    page_stop: 1  
+  selectors:
+    item: "article.storyblock"                                              # Each article container
+    title: "h4.storyblock_title a.storyblock_title_link"                    # Article title text
+    url: "h4.storyblock_title a.storyblock_title_link::attr(href)"          # Article link
+    snippet: "p.storyblock_standfirst a.storyblock_standfirst_link"         # Short article snippet/standfirst
+    date: "time.storyblock_datetime::attr(datetime)"                        # Publication date (ISO format)
+    image: "img.storyblock_img::attr(src)"                                  # Article thumbnail image
+    section: "span.storyblock_meta a.storyblock_section"                    # Category/section (e.g. QLD Politics)
+    author: ""                                                            # No author information present in this structure
+
+
+The West Australian:
+  modes: [home_fetch]
+  urls:
+    - https://thewest.com.au/
+  search:
+    url_template: 
+    page_start: 1
+    page_stop: 1  
+  selectors:
+    item: "a.css-w9t33j-StyledLink"
+    title: "h2.Card-Headline span.css-249bft-StyledHeadlineText span"
+    url: "a.css-w9t33j-StyledLink::attr(href)"
+    snippet: "p.css-pb0uo2-StyledTeaser"
+    date: ""
+    image: "picture.image img::attr(src)"
+    section: "h2.Card-Headline span.css-1p6fa63-StyledKickerText"
+    author: "div.CardByline p.CardByline-Text"
+
+
+
+The Advertiser (Adelaide):
+  modes: [crawl]
+  urls:
+    - https://www.adelaidenow.com.au/
+  search:
+    url_template: 
+    page_start: 1
+    page_stop: 1  
+  selectors:
+    item: "article.storyblock"
+    title: "h4.storyblock_title a.storyblock_title_link"
+    url: "h4.storyblock_title a.storyblock_title_link::attr(href)"
+    snippet: "p.storyblock_standfirst a.storyblock_standfirst_link"
+    date: "time.storyblock_datetime::attr(datetime)"
+    image: "img.storyblock_img::attr(src)"
+    section: "span.storyblock_meta a.storyblock_section"
+    author: ""
+  
+
+Newcastle Herald:
+  modes: [home_fetch]
+  urls:
+    - https://www.newcastleherald.com.au/
+  search:
+    url_template: 
+    page_start: 1
+    page_stop: 1  
+  selectors:
+    item: "div[data-testid='headline']"
+    title: "a.custom-chartbeat-headline-test h3"
+    url: "a.custom-chartbeat-headline-test::attr(href)"
+    snippet: "div.line-clamp-3"
+    date: "div.flex.font-inter span:last-child"
+    image: "picture img::attr(src)"
+    section: null
+    author: "span[data-testid='headline-author'] span"
+
+Illawarra Mercury:
+  modes: [home_fetch]
+  urls:
+    - https://www.illawarramercury.com.au/
+  search:
+    url_template: 
+    page_start: 1
+    page_stop: 1 
+  selectors:
+    item: "div[data-testid='headline']"
+    title: "a.custom-chartbeat-headline-test h3"
+    url: "a.custom-chartbeat-headline-test::attr(href)"
+    snippet: "div.line-clamp-3"
+    date: ""
+    image: "picture img::attr(src)"
+    section: ""
+    author: "span[data-testid='headline-author'] span"
+  
+
+Bendigo Advertiser:
+  modes: [home_fetch]
+  urls:
+    - https://www.bendigoadvertiser.com.au/
+  search:
+    url_template: 
+    page_start: 1
+    page_stop: 1 
+  selectors:
+    item: "div[data-testid='headline']"
+    title: "a.custom-chartbeat-headline-test h3"
+    url: "a.custom-chartbeat-headline-test::attr(href)"
+    snippet: "div.line-clamp-3"
+    date: ""
+    image: "picture img::attr(src)"
+    section: ""
+    author: "span[data-testid='headline-author'] span"
+  
+
+Kalgoorlie Miner:
+  modes: [home_fetch]
+  urls:
+    - https://www.kalminer.com.au/
+  search:
+    url_template: 
+    page_start: 1
+    page_stop: 1 
+  selectors:
+    item: "div.LandscapeCard"
+    title: "h2.e1w8lw9x8 span.e1w8lw9x7 span"
+    url: "a.css-1r9f8xn-StyledLink-StyledLandscapeLink::attr(href)"
+    snippet: "p.e1w8lw9x6"
+    date: ""
+    image: "picture img::attr(src)"
+    section: "span.css-1p6fa63-StyledKickerText"
+    author: ""
+  
+
+Business News WA:
+  modes: [home_fetch]
+  urls:
+    - https://www.businessnews.com.au/
+  search:
+    url_template: 
+    page_start: 1
+    page_stop: 1 
+  selectors:
+    item: "article.node-article"
+    title: "div.news-article-title-wrapper h3 a"
+    url: "div.news-article-title-wrapper h3 a::attr(href)"
+    snippet: "p.news-article-teaser span.field-item"
+    date: "span.news-article-time"
+    image: "div.news-article-image img::attr(src)"
+    section: "span.field--name-bn-article-category a"
+    author: ""
+  
+
+The Land:
+Queensland Country Life:
+Stock & Land:
+Farm Weekly:
+The Weekly:
+NT News:
+The Mercury:
+The Examiner:
+The Advocate: 
+Port Lincoln Times:
+Whyalla News:
+Murray Valley Standard:
+Geraldton Guardian:
+Albany Advertiser:
+Townsville Bulletin:
+Cairns Post:
+Sunshine Coast Daily:
+Gold Coast Bulletin:
+Geelong Advertiser:
+Ballarat Courier:
+Shepparton News: 
+
+# 40

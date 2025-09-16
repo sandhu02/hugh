@@ -4,6 +4,7 @@ import os
 import csv
 from searchers import searcher
 from homeFetch import home_fetch
+from crawl import crawl
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # goes up from engine/ to scripts/
 ADAPTERS_DIR = os.path.join(BASE_DIR, "adapters")
@@ -37,6 +38,7 @@ for site_name, site_config in config.items():
 
         modes = site_config.get("modes", [])
         for mode in modes:
+    
             if mode == "search":
                 for keyword in keywords:
                     try:
@@ -45,22 +47,23 @@ for site_name, site_config in config.items():
                         print(f"[ERROR] Failed fetching for {site_name} with keyword '{keyword}': {e}")
                         continue
 
-                    for r in results:
-                        writer.writerow({
-                            "site": site_name,
-                            "keyword": keyword,
-                            "title": r.get("title"),
-                            "url": r.get("url"),
-                            "snippet": r.get("snippet"),
-                            "date": r.get("date"),
-                            "image": r.get("image"),
-                            "section": r.get("section")
-                        })
-
             elif mode == "home_fetch":
                 try:
                     results = home_fetch(site_config , keywords)
-                    for r in results:
+                    
+                except Exception as e:
+                    print(f"[ERROR] Failed fetching for {site_name}")
+                    continue
+
+            elif mode == "":   #crawl
+                try:
+                    results = crawl(site_config , keywords)
+
+                except Exception as e:
+                    print(f"[ERROR] Failed crawl for {site_name}")
+                    continue
+
+            for r in results:
                         try:
                             writer.writerow({
                                 "site": site_name,
@@ -74,11 +77,4 @@ for site_name, site_config in config.items():
                             })
                         except Exception as e:
                             print(f"[CSV ERROR] Failed to write row: {e} | row={r}")
-                
-                except Exception as e:
-                    print(f"[ERROR] Failed fetching for {site_name}")
-                    continue
-
-            elif mode == "crawl":
-                print("[MESSAGE] No site is using crawl yet")
-    
+                    
