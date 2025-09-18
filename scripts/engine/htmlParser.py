@@ -30,6 +30,7 @@ def htmlParser(html, base_url, selectors, keywords):
         if (found_keywords):
             keywords_str = ",".join(found_keywords)    # makes a comma separated string of keywords
             news_headline = {
+                "site": "",
                 "keywords": keywords_str,
                 "title": title,
                 "url": url,

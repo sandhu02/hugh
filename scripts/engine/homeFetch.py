@@ -33,4 +33,3 @@ def home_fetch(site_config , keywords):
 
     return results
      
-
