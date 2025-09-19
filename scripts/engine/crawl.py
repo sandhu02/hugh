@@ -16,7 +16,7 @@ def crawl(site_config, keywords):
 
     options.add_argument("--headless=new")  # newer, more reliable headless mode
     options.add_argument("--disable-gpu")
-    # options.add_argument("--window-size=1920,1080")  # force a large viewport
+    options.add_argument("--window-size=1920,1080")  # force a large viewport
     options.add_argument("--ignore-certificate-errors")
     options.add_argument("--ignore-ssl-errors")
     options.add_argument("--disable-web-security")
