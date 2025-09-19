@@ -47,7 +47,7 @@ for site_name, site_config in config.items():
                     print(f"[ERROR] Failed fetching for {site_name} with keyword '{keyword}': {e}")
                     continue
 
-        elif mode == "home_fetch":
+        elif mode == "home_fetch":     #
             try:
                 results = home_fetch(site_config , keywords)
                 
@@ -55,7 +55,7 @@ for site_name, site_config in config.items():
                 print(f"[ERROR] Failed fetching for {site_name}")
                 continue
 
-        elif mode == "":   #crawl
+        elif mode == "crawl":   #
             try:
                 results = crawl(site_config , keywords)
 

@@ -8,10 +8,16 @@
 
 [ERROR] Request failed for https://www.adelaidenow.com.au/: 403 Client Error: Forbidden for url: https://www.adelaidenow.com.au/
 
-<!-- resolved -->
 
 [ERROR] Request failed for https://www.weeklytimesnow.com.au/: 403 Client Error: Forbidden for url: https://www.weeklytimesnow.com.au/
 
 [ERROR] Request failed for https://www.ntnews.com.au/: 403 Client Error: Forbidden for url: https://www.ntnews.com.au/
 
 [ERROR] Request failed for https://www.themercury.com.au/: 403 Client Error: Forbidden for url: https://www.themercury.com.au/
+
+
+[ERROR] Request failed for https://www.sunshinecoastdaily.com.au/: 403 Client Error: Forbidden for url: https://www.couriermail.com.au/news/queensland/sunshine-coast/
+
+[ERROR] Request failed for https://www.goldcoastbulletin.com.au/: 403 Client Error: Forbidden for url: https://www.goldcoastbulletin.com.au/
+
+<!-- resolved -->

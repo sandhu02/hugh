@@ -403,7 +403,7 @@ Farm Weekly:
 
 
 The Weekly:
-  modes: [home_fetch]
+  modes: [crawl]
   urls:
     - https://www.weeklytimesnow.com.au/
   search:
@@ -422,7 +422,7 @@ The Weekly:
 
 
 NT News:
-  modes: [home_fetch]
+  modes: [crawl]
   urls:
     - https://www.ntnews.com.au/
   selectors:
@@ -451,7 +451,7 @@ Alice Springs News:
 
 
 The Mercury:
-  modes: [home_fetch]
+  modes: [crawl]
   urls:
     - https://www.themercury.com.au/
   selectors:
@@ -526,14 +526,152 @@ Whyalla News:
   
     
 Murray Valley Standard:
-Geraldton Guardian:
-Albany Advertiser:
-Townsville Bulletin:
-Cairns Post:
-Sunshine Coast Daily:
-Gold Coast Bulletin:
-Geelong Advertiser:
-Ballarat Courier:
-Shepparton News: 
+  modes: [home_fetch]
+  urls:
+    - https://www.murrayvalleystandard.com.au/
+  selectors:
+    item: "div.td_module_flex"
+    title: "h3.entry-title a"
+    url: "h3.entry-title a::attr(href)"
+    snippet: "div.td-excerpt"
+    date: "time.entry-date::attr(datetime)"
+    image: "div.td-module-thumb a span::attr(style)"
+    section: ""
+    author: ""
+  
 
+Geraldton Guardian:
+  modes: [home_fetch]
+  urls:
+    - https://www.geraldtonguardian.com.au/
+  selectors:
+    item: "div.css-1ls5bi3-StyledPortrait"
+    title: "h2.Card-Headline span.css-249bft-StyledHeadlineText span"
+    url: "a.css-19z4sfu-StyledLink-StyledLink::attr(href)"
+    snippet: "p.css-pb0uo2-StyledTeaser"
+    date: ""
+    image: "picture img::attr(src)"
+    section: "span.css-1p6fa63-StyledKickerText"
+    author: "div.CardByline p"
+  
+
+Albany Advertiser:
+  modes: [home_fetch]
+  urls:
+    - https://www.albanyadvertiser.com.au/
+  selectors:
+    item: "div.css-1ls5bi3-StyledPortrait"
+    title: "h2.Card-Headline span.css-249bft-StyledHeadlineText span"
+    url: "a.css-1ejzmll-StyledLink-StyledLink::attr(href)"
+    snippet: "p.css-pb0uo2-StyledTeaser"
+    date: ""
+    image: "picture img::attr(src)"
+    section: "span.css-1p6fa63-StyledKickerText"
+    author: "div.CardByline p"
+  
+
+Townsville Bulletin:
+  modes: [home_fetch]
+  urls:
+    - https://www.townsvillebulletin.com.au/
+  selectors:
+    item: "article.storyblock"
+    title: "h4.storyblock_title a.storyblock_title_link"
+    url: "h4.storyblock_title a.storyblock_title_link::attr(href)"
+    snippet: "p.storyblock_standfirst"
+    date: "time.storyblock_datetime::attr(datetime)"
+    image: "img.storyblock_img::attr(src)"
+    section: "span.storyblock_meta a.storyblock_section"
+    author: ""
+  
+
+Cairns Post:
+  modes: [home_fetch]
+  urls:
+    - https://www.cairnspost.com.au/
+  selectors:
+    item: "article.storyblock"
+    title: "h4.storyblock_title a.storyblock_title_link"
+    url: "h4.storyblock_title a.storyblock_title_link::attr(href)"
+    snippet: "p.storyblock_standfirst"
+    date: "time.storyblock_datetime::attr(datetime)"
+    image: "img.storyblock_img::attr(src)"
+    section: "span.storyblock_meta a.storyblock_section"
+    author: ""
+  
+
+Sunshine Coast Daily:
+  modes: [crawl]
+  urls:
+    - https://www.sunshinecoastdaily.com.au/
+  selectors:
+    item: "article.storyblock"
+    title: "h4.storyblock_title a.storyblock_title_link"
+    url: "h4.storyblock_title a.storyblock_title_link::attr(href)"
+    snippet: "p.storyblock_standfirst"
+    date: "time.storyblock_datetime::attr(datetime)"
+    image: "img.storyblock_img::attr(src)"
+    section: "span.storyblock_meta a.storyblock_section"
+    author: ""
+  
+
+Gold Coast Bulletin:
+  modes: [crawl]
+  urls:
+    - https://www.goldcoastbulletin.com.au/
+  selectors:
+    item: "article.storyblock"
+    title: "h4.storyblock_title a.storyblock_title_link"
+    url: "h4.storyblock_title a.storyblock_title_link::attr(href)"
+    snippet: "p.storyblock_standfirst"
+    date: "time.storyblock_datetime::attr(datetime)"
+    image: "img.storyblock_img::attr(src)"
+    section: "span.storyblock_meta a.storyblock_section"
+    author: ""
+  
+
+Geelong Advertiser:
+  modes: [home_fetch]
+  urls:
+    - https://www.geelongadvertiser.com.au/
+  selectors:
+    item: "article.storyblock"
+    title: "h4.storyblock_title a.storyblock_title_link"
+    url: "h4.storyblock_title a.storyblock_title_link::attr(href)"
+    snippet: "p.storyblock_standfirst"
+    date: "time.storyblock_datetime::attr(datetime)"
+    image: "img.storyblock_img::attr(src)"
+    section: "span.storyblock_meta a.storyblock_section"
+    author: ""
+
+
+Ballarat Courier:
+  modes: [home_fetch]
+  urls:
+    - https://www.thecourier.com.au/
+  selectors:
+    item: "div[data-testid='headline']"
+    title: "a.custom-chartbeat-headline-test h3"
+    url: "a.custom-chartbeat-headline-test::attr(href)"
+    snippet: "div.line-clamp-3"
+    date: "div.flex.font-inter.text-sm span:last-child"
+    image: "picture img::attr(src)"
+    section: "div[data-testid='rendered-signpost']"
+    author: "span[data-testid='headline-author'] span"
+  
+
+Shepparton News:
+  modes: [home_fetch]
+  urls:
+    - https://www.sheppnews.com.au/
+  selectors:
+    item: "article.teaser--article-small"
+    title: "h3.teaser__headline"
+    url: "a.teaser__link::attr(href)"
+    snippet: "div.teaser__leadin"
+    date: null
+    image: "div.teaser__image img::attr(src)"
+    section: "div.teaser__kicker"
+    author: "div.teaser__author"
+  
 # 40
