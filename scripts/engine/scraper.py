@@ -7,30 +7,61 @@ from searchers import searcher
 from homeFetch import home_fetch
 from crawl import crawl
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # goes up from engine/ to scripts/
-ADAPTERS_DIR = os.path.join(BASE_DIR, "adapters")
-STORAGE_DIR = os.path.join(BASE_DIR, "storage")
-yaml_path = os.path.join(ADAPTERS_DIR, "sites.yaml")
-filters_path = os.path.join(ADAPTERS_DIR, "rules", "filters.json")
+def scraper():
+    BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # goes up from engine/ to scripts/
+    ADAPTERS_DIR = os.path.join(BASE_DIR, "adapters")
+    STORAGE_DIR = os.path.join(BASE_DIR, "storage")
+    yaml_path = os.path.join(ADAPTERS_DIR, "sites.yaml")
+    filters_path = os.path.join(ADAPTERS_DIR, "rules", "filters.json")
 
-os.makedirs(STORAGE_DIR, exist_ok=True)
+    os.makedirs(STORAGE_DIR, exist_ok=True)
 
-with open(yaml_path, "r", encoding="utf-8") as f:
-    config = yaml.safe_load(f)
+    with open(yaml_path, "r", encoding="utf-8") as f:
+        config = yaml.safe_load(f)
 
-with open(filters_path, "r", encoding="utf-8") as f:
-    filters = json.load(f)
+    with open(filters_path, "r", encoding="utf-8") as f:
+        filters = json.load(f)
 
-keywords = filters.get("keywords", [])
+    keywords = filters.get("keywords", [])
 
-csv_filename = f"scraped_data.csv"
-csv_path = os.path.join(STORAGE_DIR, csv_filename)
-fieldnames = ["site", "keyword", "title", "url", "snippet", "date", "image", "section"]
+    csv_filename = f"scraped_data.csv"
+    csv_path = os.path.join(STORAGE_DIR, csv_filename)
+    fieldnames = ["site", "keyword", "title", "url", "snippet", "date", "image", "section"]
 
-combined_results = []
+    combined_results = []
 
-# --- STEP 1: define worker function
-def process_site(site_name, site_config):
+    # run in parallel
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+        futures = [executor.submit(process_site, name, cfg, keywords) for name, cfg in config.items()]
+        for future in concurrent.futures.as_completed(futures):
+            combined_results.extend(future.result())
+
+    # write to CSV
+    with open(csv_path, "w", newline="", encoding="utf-8") as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+
+        for r in combined_results:
+            try:
+                writer.writerow({
+                    "site": r.get("site"),
+                    "keyword": r.get("keywords"),
+                    "title": r.get("title"),
+                    "url": r.get("url"),
+                    "snippet": r.get("snippet"),
+                    "date": r.get("date"),
+                    "image": r.get("image"),
+                    "section": r.get("section")
+                })
+            except Exception as e:
+                print(f"[CSV ERROR] Failed to write row: {e} | row={r}")
+
+    print(f"Done! Wrote {len(combined_results)} results to {csv_path}")
+
+
+# --- worker function
+
+def process_site(site_name, site_config, keywords):
     site_results = []
     if not site_config:
         print(f"Skipping {site_name}, no config provided")
@@ -57,31 +88,3 @@ def process_site(site_name, site_config):
         r["site"] = site_name  # add site name for CSV
     return site_results
 
-
-# --- STEP 2: run in parallel
-with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
-    futures = [executor.submit(process_site, name, cfg) for name, cfg in config.items()]
-    for future in concurrent.futures.as_completed(futures):
-        combined_results.extend(future.result())
-
-# --- STEP 3: write CSV
-with open(csv_path, "w", newline="", encoding="utf-8") as csvfile:
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-    writer.writeheader()
-
-    for r in combined_results:
-        try:
-            writer.writerow({
-                "site": r.get("site"),
-                "keyword": r.get("keywords"),
-                "title": r.get("title"),
-                "url": r.get("url"),
-                "snippet": r.get("snippet"),
-                "date": r.get("date"),
-                "image": r.get("image"),
-                "section": r.get("section")
-            })
-        except Exception as e:
-            print(f"[CSV ERROR] Failed to write row: {e} | row={r}")
-
-print(f"Done! Wrote {len(combined_results)} results to {csv_path}")
