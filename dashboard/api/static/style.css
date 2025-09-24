@@ -1,0 +1,95 @@
+/* Reset */
+body, h2, p, table {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.heading{
+    /* margin-bottom: 10px; */
+    
+    font-size: xx-large;
+    text-decoration-line: underline;
+}
+
+body {
+  background-color: #f4f6f9;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+/* Container */
+.container {
+  width: 90%;
+  max-width: 1000px;
+  /* background: #ae0a0a; */
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+/* Table */
+table {
+  width: 95%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+thead {
+  background-color: #007acc;
+  color: white;
+}
+
+thead th {
+  padding: 12px;
+  text-align: center;
+}
+
+tbody td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+tbody tr:hover {
+  background-color: #f1f9ff;
+}
+
+/* Button */
+button {
+  margin-top: 20px;
+  margin-bottom: 30px;
+  padding: 12px 24px;
+  border: none;
+  background-color: #007acc;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover:not(:disabled) {
+  background-color: #005a99;
+}
+
+button:disabled {
+  background-color: #a0cbe8;
+  cursor: not-allowed;
+}
+
+/* Loading message */
+#status{
+  margin-top: 5px;
+  margin-bottom: 15px;
+  font-style: italic;
+  color: #555;
+  /* display: none; */
+}

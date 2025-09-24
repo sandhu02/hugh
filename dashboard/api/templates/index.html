@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Scraper Table</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+  <h2 class="heading">Scraped Results</h2>
+
+  <table border="1" id="resultsTable" cellpadding="8">
+    <thead id ="table-head">
+
+        <tr>
+            <th>Site</th>
+            <th>Keyword</th>
+            <th>Title</th>
+            <th>URL</th>
+            <th>Snippet</th>
+            <th>Date</th>
+            <th>Image</th>
+            <th>Section</th>
+        </tr>
+    </thead>
+    <tbody id="table-body">
+
+        {% for row in data %}
+        <tr>
+            <td>{{ row.site }}</td>
+            <td>{{ row.keyword }}</td>
+            <td>{{ row.title }}</td>
+            <td><a href="{{ row.url }}" target="_blank">Link</a></td>
+            <td>{{ row.snippet }}</td>
+            <td>{{ row.date }}</td>
+            <td><img src="{{ row.image }}" width="80"></td>
+            <td>{{ row.section }}</td>
+        </tr>
+    </tbody>
+    {% endfor %}
+  </table>
+
+  <button id="refreshBtn">Fetch New Results</button>
+  <a href="/logs-page-render"><button id="get-logs-btn">Get Logs</button></a>
+  <p id="status"></p>
+</body>
+</html>

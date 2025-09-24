@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Scrape Logs</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    input, button { padding: 8px; margin: 5px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <h1>Scrape Logs</h1>
+
+  <label for="date">Filter by Date (YYYY-MM-DD):</label>
+  <input type="text" id="date" placeholder="2025-09-23">
+  <button id="fetchBtn">Fetch Logs</button>
+
+  <table id="logsTable">
+    <thead>
+      <tr>
+        <th>Scrape Start</th>
+        <th>Scrape End</th>
+        <th>Duration (s)</th>
+        <th>Sites Scraped</th>
+        <th>Results Collected</th>
+        <th>Modes</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    document.getElementById("fetchBtn").addEventListener("click", () => {
+      const date = document.getElementById("date").value;
+      const url = date ? `/get-logs?date=${date}` : "/get-logs";
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector("#logsTable tbody");
+          tbody.innerHTML = "";
+
+          if (data.logs.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='6'>No logs found</td></tr>";
+            return;
+          }
+
+          data.logs.forEach(log => {
+            const start = formatDate(log.scrape_start);
+            const end = formatDate(log.scrape_end);
+
+            const row = `
+              <tr>
+                <td>${start || ""}</td>
+                <td>${end || ""}</td>
+                <td>${log.duration_seconds || ""}</td>
+                <td>${log.sites_scraped || ""}</td>
+                <td>${log.results_collected || ""}</td>
+                <td>${log.scrape_modes || ""}</td>
+              </tr>
+            `;
+            tbody.insertAdjacentHTML("beforeend", row);
+          });
+        })
+        .catch(err => console.error("Error fetching logs:", err));
+
+
+
+        function formatDate(isoString) {
+            if (!isoString) return "";
+
+            // Remove Z and timezone
+            const clean = isoString.replace("Z", "").split("+")[0];
+            const d = new Date(clean);
+
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, "0");
+            const dd = String(d.getDate()).padStart(2, "0");
+            const hh = String(d.getHours()).padStart(2, "0");
+            const min = String(d.getMinutes()).padStart(2, "0");
+            const ss = String(d.getSeconds()).padStart(2, "0");
+
+            // ✅ Your format: 2025-09-23 - 20:03:08
+            return `${yyyy}-${mm}-${dd} - ${hh}:${min}:${ss}`;
+        }
+    });
+  </script>
+</body>
+</html>

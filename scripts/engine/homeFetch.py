@@ -1,5 +1,5 @@
 import requests
-from htmlParser import htmlParser
+from .htmlParser import htmlParser
 
 HEADERS = {
     "User-Agent": (

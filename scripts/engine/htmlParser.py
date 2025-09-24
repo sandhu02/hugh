@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
-from get_element_value import get_element_value
-from filter import keywords_in_title
+from .get_element_value import get_element_value
+from .filter import keywords_in_title
 from urllib.parse import urljoin
 
 def htmlParser(html, base_url, selectors, keywords):

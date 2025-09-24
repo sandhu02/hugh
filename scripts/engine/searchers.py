@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-from get_element_value import get_element_value
+from .get_element_value import get_element_value
 
 HEADERS = {
     "User-Agent": (

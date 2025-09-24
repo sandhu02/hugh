@@ -675,3 +675,170 @@ Shepparton News:
     author: "div.teaser__author"
   
 # 40
+
+NZ Herald (Business):
+  modes: [home_fetch]
+  urls:
+    - https://www.nzherald.co.nz/business/
+  selectors:
+    item: "article[data-test-ui='storycard-default-landscape-text-below-large']"
+    title: "h3[data-test-ui='story-card--headline']"
+    url: "a[data-test-ui='story-card--link--title']::attr(href)"
+    snippet: "a[data-test-ui='story-card--link--synopsis'] p"
+    date: "div[data-test-ui='meta-data__time-stamp']"
+    image: "div[data-test-ui='story-card--img-box'] img::attr(src)"
+    section: "a[data-test-ui='story-card--kicker']"
+    author: ""
+  
+
+RNZ (Business):
+  modes: [home_fetch]
+  urls:
+    - https://www.rnz.co.nz/news/business
+  selectors:
+    item: "li.o-digest.o-digest--news"
+    title: "h3.o-digest__headline a"
+    url: "h3.o-digest__headline a::attr(href)"
+    snippet: "div.o-digest__summary p"
+    date: "span.o-kicker__time"
+    image: "div.thumb-container img::attr(src)"
+    section: "div.o-kicker__zones a"
+    author: ""
+  
+
+NBR (National Business Review):
+  modes: [home_fetch]
+  urls:
+    - https://www.nbr.co.nz/
+
+BusinessDesk NZ:
+  modes: [home_fetch]
+  urls:
+    - https://businessdesk.co.nz/
+  selectors:
+    item: "div.card.news-card.news-small"
+    title: "h4.card-title a[href*='/article/']"
+    url: "h4.card-title a[href*='/article/']::attr(href)"
+    snippet: "p.card-text"
+    date: "span.news-date"
+    image: "div.col-4 img::attr(src)"
+    section: "strong.news-category a"
+    author: "div.news-author a.author"
+  
+
+Otago Daily Times (Business):
+  modes: [home_fetch]
+  urls:
+    - https://www.odt.co.nz/
+  selectors:
+    item: "article.odt-story-teaser"
+    title: "header.after-image h3 a"
+    url: "header.after-image h3 a::attr(href)"
+    snippet: "div.field-name-body div.field-item"
+    date: ""
+    image: "div.field-name-field-image img::attr(src)"
+    section: ""
+    author: ""
+
+
+Waikato Times (Business):
+  modes: [home_fetch]
+  urls:
+    - https://www.waikatotimes.co.nz/business
+  selectors:
+    item: "a.story-card-link[data-testid='story-card']"
+    title: "ion-card-title[data-testid='story-title']"
+    url: "a.story-card-link::attr(href)"
+    snippet: "div.sf-desc"
+    date: ""
+    image: "div.sf-story-image-container img::attr(src)"
+    section: ""
+    author: "div.author-container span span"
+
+
+Scoop NZ:
+  modes: [home_fetch]
+  urls:
+    - https://www.scoop.co.nz/    
+  selectors:
+    item: "div.story-panel"
+    title: "h4"
+    url: "a::attr(href)"
+    snippet: "p"
+    image: "h4 img::attr(src)"
+    
+
+MiningNews.net: 
+  modes: [home_fetch]
+  urls:
+    - https://www.miningnews.net/
+  selectors:
+    item: "div.secondary-story-content"
+    title: "h4.headline a"
+    url: "h4.headline a::attr(href)"
+    snippet: "p.strapline"
+    date: "div.date"
+    section: "h5.category a"
+  
+
+Australian Mining:  
+  modes: [home_fetch]
+  urls:
+    - https://www.australianmining.com.au/
+
+Mining Weekly: 
+  modes: [home_fetch]
+  urls:
+    - https://www.miningweekly.com/
+
+Energy News Bulletin: 
+  modes: [home_fetch]
+  urls:
+    - https://www.energynewsbulletin.net/
+
+Oil & Gas Australia: 
+  modes: [home_fetch]
+  urls:
+    - https://www.oilandgasaustralia.com.au/
+
+RenewEconomy: 
+  modes: [home_fetch]
+  urls:
+    - https://reneweconomy.com.au/
+
+Utility Magazine: 
+  modes: [home_fetch]
+  urls:
+    - https://utilitymagazine.com.au/
+
+PV Magazine Australia: 
+  modes: [home_fetch]
+  urls:
+    - https://www.pv-magazine-australia.com/
+
+Beef Central: 
+  modes: [home_fetch]
+  urls:
+    - https://www.beefcentral.com/
+
+Grain Central: 
+  modes: [home_fetch]
+  urls:
+    - https://www.graincentral.com/
+
+Sheep Central: 
+  modes: [home_fetch]
+  urls:
+    - https://www.sheepcentral.com/
+
+Food & Drink Business: 
+  modes: [home_fetch]
+  urls:
+    - https://www.foodanddrinkbusiness.com.au/    
+
+Inside Retail: 
+  modes: [home_fetch]
+  urls:
+    - https://insideretail.com.au/    
+
+#60
