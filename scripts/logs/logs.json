@@ -3,16 +3,88 @@
     "scrape_start": "2025-09-23T20:03:08.946991+00:00Z",
     "scrape_end": "2025-09-23T20:03:36.591661+00:00Z",
     "duration_seconds": 27.64,
-    "sites_scraped": 62,
-    "results_collected": 27,
-    "scrape_modes": "home_fetch, crawl"
+    "sites_scraped": 50,
+    "results_collected": 37,
+    "scrape_modes": [
+      "home_fetch"
+    ]
   },
   {
     "scrape_start": "2025-09-24T14:22:04.717825+00:00Z",
     "scrape_end": "2025-09-24T14:22:40.826008+00:00Z",
     "duration_seconds": 36.11,
-    "sites_scraped": 62,
-    "results_collected": 47,
+    "sites_scraped": 50,
+    "results_collected": 37,
+    "scrape_modes": [
+      "home_fetch"
+    ]
+  },
+  {
+    "scrape_start": "2025-09-24T20:53:25.993814+00:00Z",
+    "scrape_end": "2025-09-24T20:54:07.633619+00:00Z",
+    "duration_seconds": 41.64,
+    "sites_scraped": 50,
+    "results_collected": 37,
+    "scrape_modes": [
+      "home_fetch"
+    ]
+  },
+  {
+    "scrape_start": "2025-09-24T21:00:32.733746+00:00Z",
+    "scrape_end": "2025-09-24T21:01:02.186504+00:00Z",
+    "duration_seconds": 29.45,
+    "sites_scraped": 50,
+    "results_collected": 37,
+    "scrape_modes": [
+      "home_fetch"
+    ]
+  },
+  {
+    "scrape_start": "2025-09-24T21:09:04.273029+00:00Z",
+    "scrape_end": "2025-09-24T21:09:33.668980+00:00Z",
+    "duration_seconds": 29.4,
+    "sites_scraped": 51,
+    "results_collected": 42,
+    "scrape_modes": [
+      "home_fetch"
+    ]
+  },
+  {
+    "scrape_start": "2025-09-24T21:20:30.192688+00:00Z",
+    "scrape_end": "2025-09-24T21:20:59.978505+00:00Z",
+    "duration_seconds": 29.79,
+    "sites_scraped": 51,
+    "results_collected": 42,
+    "scrape_modes": [
+      "home_fetch"
+    ]
+  },
+  {
+    "scrape_start": "2025-09-24T21:22:49.744782+00:00Z",
+    "scrape_end": "2025-09-24T21:24:45.732191+00:00Z",
+    "duration_seconds": 115.99,
+    "sites_scraped": 51,
+    "results_collected": 42,
+    "scrape_modes": [
+      "home_fetch"
+    ]
+  },
+  {
+    "scrape_start": "2025-09-24T21:27:41.318613+00:00Z",
+    "scrape_end": "2025-09-24T21:28:17.180866+00:00Z",
+    "duration_seconds": 35.86,
+    "sites_scraped": 51,
+    "results_collected": 42,
+    "scrape_modes": [
+      "home_fetch"
+    ]
+  },
+  {
+    "scrape_start": "2025-09-24T21:33:25.908804+00:00Z",
+    "scrape_end": "2025-09-24T21:37:26.929927+00:00Z",
+    "duration_seconds": 241.02,
+    "sites_scraped": 51,
+    "results_collected": 66,
     "scrape_modes": [
       "home_fetch",
       "crawl"

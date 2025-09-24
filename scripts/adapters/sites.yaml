@@ -710,6 +710,15 @@ NBR (National Business Review):
   modes: [home_fetch]
   urls:
     - https://www.nbr.co.nz/
+  selectors:
+    item: "div[class^='article-']"
+    title: "h4.text-single-title"
+    url: "a::attr(href)"
+    snippet: "p.text-description"
+    image: "div.frame .bg-holder::attr(style)"
+    category: "a.text-category"
+    comments: "a[href*='#comments'] span.size-7"
+  
 
 BusinessDesk NZ:
   modes: [home_fetch]
@@ -746,14 +755,14 @@ Waikato Times (Business):
   urls:
     - https://www.waikatotimes.co.nz/business
   selectors:
-    item: "a.story-card-link[data-testid='story-card']"
+    item: "ion-card.sf-story-card"
     title: "ion-card-title[data-testid='story-title']"
     url: "a.story-card-link::attr(href)"
     snippet: "div.sf-desc"
-    date: ""
-    image: "div.sf-story-image-container img::attr(src)"
-    section: ""
-    author: "div.author-container span span"
+    image: "img.story-img::attr(src)"
+    author: "div.sf-author-byline .author-container span span"
+    source: "a.masthead-article-source::attr(href)"
+
 
 
 Scoop NZ:
@@ -766,6 +775,9 @@ Scoop NZ:
     url: "a::attr(href)"
     snippet: "p"
     image: "h4 img::attr(src)"
+    date: ""
+    section: ""
+    author: ""
     
 
 MiningNews.net: 
@@ -785,60 +797,69 @@ Australian Mining:
   modes: [home_fetch]
   urls:
     - https://www.australianmining.com.au/
+  selectors:
+    item: "div[id^='post-']"
+    title: "h2.mp-title a"
+    url: "h2.mp-title a::attr(href)"
+    snippet: "span.mp-excerpt"
+    image: "a.mp-image img::attr(src)"
+    author: "span.mp-author span[itemprop='name']"
+    date: "span.mp-date time[itemprop='dateModified']"
+  
 
-Mining Weekly: 
-  modes: [home_fetch]
-  urls:
-    - https://www.miningweekly.com/
+# Mining Weekly: 
+#   modes: [home_fetch]
+#   urls:
+#     - https://www.miningweekly.com/
 
-Energy News Bulletin: 
-  modes: [home_fetch]
-  urls:
-    - https://www.energynewsbulletin.net/
+# Energy News Bulletin: 
+#   modes: [home_fetch]
+#   urls:
+#     - https://www.energynewsbulletin.net/
 
-Oil & Gas Australia: 
-  modes: [home_fetch]
-  urls:
-    - https://www.oilandgasaustralia.com.au/
+# Oil & Gas Australia: 
+#   modes: [home_fetch]
+#   urls:
+#     - https://www.oilandgasaustralia.com.au/
 
-RenewEconomy: 
-  modes: [home_fetch]
-  urls:
-    - https://reneweconomy.com.au/
+# RenewEconomy: 
+#   modes: [home_fetch]
+#   urls:
+#     - https://reneweconomy.com.au/
 
-Utility Magazine: 
-  modes: [home_fetch]
-  urls:
-    - https://utilitymagazine.com.au/
+# Utility Magazine: 
+#   modes: [home_fetch]
+#   urls:
+#     - https://utilitymagazine.com.au/
 
-PV Magazine Australia: 
-  modes: [home_fetch]
-  urls:
-    - https://www.pv-magazine-australia.com/
+# PV Magazine Australia: 
+#   modes: [home_fetch]
+#   urls:
+#     - https://www.pv-magazine-australia.com/
 
-Beef Central: 
-  modes: [home_fetch]
-  urls:
-    - https://www.beefcentral.com/
+# Beef Central: 
+#   modes: [home_fetch]
+#   urls:
+#     - https://www.beefcentral.com/
 
-Grain Central: 
-  modes: [home_fetch]
-  urls:
-    - https://www.graincentral.com/
+# Grain Central: 
+#   modes: [home_fetch]
+#   urls:
+#     - https://www.graincentral.com/
 
-Sheep Central: 
-  modes: [home_fetch]
-  urls:
-    - https://www.sheepcentral.com/
+# Sheep Central: 
+#   modes: [home_fetch]
+#   urls:
+#     - https://www.sheepcentral.com/
 
-Food & Drink Business: 
-  modes: [home_fetch]
-  urls:
-    - https://www.foodanddrinkbusiness.com.au/    
+# Food & Drink Business: 
+#   modes: [home_fetch]
+#   urls:
+#     - https://www.foodanddrinkbusiness.com.au/    
 
-Inside Retail: 
-  modes: [home_fetch]
-  urls:
-    - https://insideretail.com.au/    
+# Inside Retail: 
+#   modes: [home_fetch]
+#   urls:
+#     - https://insideretail.com.au/    
 
 #60

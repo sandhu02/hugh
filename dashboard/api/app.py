@@ -82,13 +82,6 @@ def render_logs_page():
 
 @app.route("/get-logs", methods=["GET"])
 def get_logs():
-    # query_date = request.args.get("date")
-    # with open(LOGS_PATH, "r", encoding="utf-8") as f:
-    #     logs_data = json.load(f)
-    #     if query_date:
-    #         filtered_logs = [log for log in logs_data if log.get("scrape_start", "").startswith(query_date)]
-    #         return jsonify({"logs":filtered_logs})
-    #     return jsonify({"logs" : logs_data})
 
     query_date = request.args.get("date")  # format: YYYY-MM-DD
 
@@ -117,14 +110,6 @@ def get_logs():
                 filtered_logs.append(log)
 
     return jsonify({"logs": filtered_logs})
-
-# @app.route("/get-logs", methods=["GET"])
-# def get_logs():
-#     with open(LOGS_PATH, "r", encoding="utf-8") as f:
-#         logs_data = json.load(f)
-#         print("abc................................")
-#         return logs_data
-
 
 
 if __name__ == '__main__':

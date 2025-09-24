@@ -1,92 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Scrape Logs</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    input, button { padding: 8px; margin: 5px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background: #f0f0f0; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrape Logs Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='logs-style.css') }}">
 </head>
 <body>
-  <h1>Scrape Logs</h1>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-spider"></i>
+                Scraper Dashboard
+            </a>
+            
+            <div class="navbar-nav">
+                <div class="dropdown">
+                    <button class="dropdown-toggle" id="dropdownToggle">
+                        <i class="fas fa-filter"></i>
+                        <span id="filterButtonText">Date Filters</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu" id="filterDropdown">
+                        <div class="dropdown-header">
+                            <div class="dropdown-actions">
+                                <button class="btn-quick-filter" data-days="1">Today</button>
+                                <button class="btn-quick-filter" data-days="7">Last 7 Days</button>
+                                <button class="btn-quick-filter" data-days="30">Last 30 Days</button>
+                            </div>
+                        </div>
+                        <div class="dropdown-search">
+                            <label for="customDate">Custom Date:</label>
+                            <input type="date" id="customDate" class="custom-date-input">
+                        </div>
+                        <div class="dropdown-footer">
+                            <button class="btn-apply-filters" id="applyDateFilter">Apply Date Filter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-  <label for="date">Filter by Date (YYYY-MM-DD):</label>
-  <input type="text" id="date" placeholder="2025-09-23">
-  <button id="fetchBtn">Fetch Logs</button>
+            <div class="navbar-buttons">
+                <button class="btn btn-primary" id="fetchBtn">
+                    <i class="fas fa-sync-alt"></i>
+                    Fetch Logs
+                </button>
+                <a href="/" class="btn btn-secondary">
+                    <i class="fas fa-table"></i>
+                    Back to Results
+                </a>
+            </div>
+        </div>
+    </nav>
 
-  <table id="logsTable">
-    <thead>
-      <tr>
-        <th>Scrape Start</th>
-        <th>Scrape End</th>
-        <th>Duration (s)</th>
-        <th>Sites Scraped</th>
-        <th>Results Collected</th>
-        <th>Modes</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+    <!-- Main Content -->
+    <div class="container">
+        <h1 class="heading">
+            <i class="fas fa-file-alt"></i>
+            Scraping Logs Dashboard
+        </h1>
 
-  <script>
-    document.getElementById("fetchBtn").addEventListener("click", () => {
-      const date = document.getElementById("date").value;
-      const url = date ? `/get-logs?date=${date}` : "/get-logs";
+        <!-- Filter Controls -->
+        <div class="filter-container">
+            <div class="filter-row">
+                <div class="date-filter">
+                    <label for="dateInput">
+                        <i class="fas fa-calendar"></i>
+                        Filter by Date:
+                    </label>
+                    <input type="text" id="dateInput" placeholder="YYYY-MM-DD (e.g., 2025-09-23)" class="date-input">
+                    <button class="btn-clear-date" id="clearDateBtn">
+                        <i class="fas fa-times"></i>
+                        Clear
+                    </button>
+                </div>
+                <div class="stats-container" id="statsContainer">
+                    <div class="stat-item">
+                        <i class="fas fa-list-ol"></i>
+                        <span class="stat-label">Total Logs:</span>
+                        <span class="stat-value" id="totalLogs">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span class="stat-label">Avg Duration:</span>
+                        <span class="stat-value" id="avgDuration">0s</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-database"></i>
+                        <span class="stat-label">Total Results:</span>
+                        <span class="stat-value" id="totalResults">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      fetch(url)
-        .then(res => res.json())
-        .then(data => {
-          const tbody = document.querySelector("#logsTable tbody");
-          tbody.innerHTML = "";
+        <!-- Table Container -->
+        <div class="table-container">
+            <table id="logsTable">
+                <thead id="table-head">
+                    <tr>
+                        <th class="sortable" data-column="0">
+                            <i class="fas fa-play"></i>
+                            Scrape Start
+                            <i class="fas fa-sort sort-icon"></i>
+                        </th>
+                        <th class="sortable" data-column="1">
+                            <i class="fas fa-stop"></i>
+                            Scrape End
+                            <i class="fas fa-sort sort-icon"></i>
+                        </th>
+                        <th class="sortable" data-column="2">
+                            <i class="fas fa-stopwatch"></i>
+                            Duration (s)
+                            <i class="fas fa-sort sort-icon"></i>
+                        </th>
+                        <th class="sortable" data-column="3">
+                            <i class="fas fa-globe"></i>
+                            Sites Scraped
+                            <i class="fas fa-sort sort-icon"></i>
+                        </th>
+                        <th class="sortable" data-column="4">
+                            <i class="fas fa-chart-bar"></i>
+                            Results Collected
+                            <i class="fas fa-sort sort-icon"></i>
+                        </th>
+                        <th>
+                            <i class="fas fa-cogs"></i>
+                            Modes
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="logsTableBody">
+                    <!-- Logs will be populated here -->
+                </tbody>
+            </table>
+        </div>
 
-          if (data.logs.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='6'>No logs found</td></tr>";
-            return;
-          }
+        <!-- Status and Actions -->
+        <div class="status-section">
+            <p id="status">Ready to fetch logs</p>
+            <div class="action-buttons">
+                <button class="btn btn-export" id="exportBtn">
+                    <i class="fas fa-download"></i>
+                    Export Logs
+                </button>
+                <button class="btn btn-refresh" id="autoRefreshBtn">
+                    <i class="fas fa-sync"></i>
+                    Auto Refresh: OFF
+                </button>
+            </div>
+        </div>
+    </div>
 
-          data.logs.forEach(log => {
-            const start = formatDate(log.scrape_start);
-            const end = formatDate(log.scrape_end);
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Fetching logs...</p>
+        </div>
+    </div>
 
-            const row = `
-              <tr>
-                <td>${start || ""}</td>
-                <td>${end || ""}</td>
-                <td>${log.duration_seconds || ""}</td>
-                <td>${log.sites_scraped || ""}</td>
-                <td>${log.results_collected || ""}</td>
-                <td>${log.scrape_modes || ""}</td>
-              </tr>
-            `;
-            tbody.insertAdjacentHTML("beforeend", row);
-          });
-        })
-        .catch(err => console.error("Error fetching logs:", err));
+    <!-- Success/Error Toast -->
+    <div id="toast" class="toast">
+        <div class="toast-content">
+            <i class="toast-icon"></i>
+            <span class="toast-message"></span>
+        </div>
+    </div>
 
-
-
-        function formatDate(isoString) {
-            if (!isoString) return "";
-
-            // Remove Z and timezone
-            const clean = isoString.replace("Z", "").split("+")[0];
-            const d = new Date(clean);
-
-            const yyyy = d.getFullYear();
-            const mm = String(d.getMonth() + 1).padStart(2, "0");
-            const dd = String(d.getDate()).padStart(2, "0");
-            const hh = String(d.getHours()).padStart(2, "0");
-            const min = String(d.getMinutes()).padStart(2, "0");
-            const ss = String(d.getSeconds()).padStart(2, "0");
-
-            // ✅ Your format: 2025-09-23 - 20:03:08
-            return `${yyyy}-${mm}-${dd} - ${hh}:${min}:${ss}`;
-        }
-    });
-  </script>
+    <script src="{{ url_for('static', filename='logs-script.js') }}"></script>
 </body>
 </html>

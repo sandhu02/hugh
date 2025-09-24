@@ -102,8 +102,11 @@ def scraper():
     print(f"Done! Wrote {len(combined_results)} results to {csv_path}")
     print(f"Log saved to {log_path}")
 
-# --- worker function
+    return combined_results 
 
+
+
+# --- worker function
 def process_site(site_name, site_config, keywords):
     site_results = []
     if not site_config:
@@ -120,7 +123,7 @@ def process_site(site_name, site_config, keywords):
             elif mode == "home_fetch":
                 site_results.extend(home_fetch(site_config, keywords))
 
-            elif mode == "":  #crawl
+            elif mode == "crawl":  #crawl
                 site_results.extend(crawl(site_config, keywords))
 
         except Exception as e:

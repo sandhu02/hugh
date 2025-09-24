@@ -1,47 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Scraper Table</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scraper Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <h2 class="heading">Scraped Results</h2>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="navbar-brand">
+                <i class="fas fa-spider"></i>
+                Scraper Dashboard
+            </a>
+            
+            <div class="navbar-nav">
+                <div class="dropdown">
+                    <button class="dropdown-toggle" id="dropdownToggle">
+                        <i class="fas fa-filter"></i>
+                        <span id="filterButtonText">Categories (All)</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu" id="categoryDropdown">
+                        <div class="dropdown-header">
+                            <div class="dropdown-actions">
+                                <button class="btn-select-all" id="selectAllBtn">Select All</button>
+                                <button class="btn-clear-all" id="clearAllBtn">Clear All</button>
+                            </div>
+                        </div>
+                        <div class="dropdown-search">
+                            <input type="text" id="categorySearch" placeholder="Search categories..." class="category-search-input">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="dropdown-items-container" id="dropdownItemsContainer">
+                            <!-- Dynamic categories will be added here -->
+                            <div class="dropdown-item-checkbox">
+                                <input type="checkbox" id="filter-all" value="all" checked>
+                                <label for="filter-all">
+                                    <i class="fas fa-list"></i>
+                                    <span>Show All</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="dropdown-footer">
+                            <button class="btn-apply-filters" id="applyFiltersBtn">Apply Filters</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-  <table border="1" id="resultsTable" cellpadding="8">
-    <thead id ="table-head">
+            <div class="navbar-buttons">
+                <button class="btn btn-primary" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i>
+                    Scrap Again
+                </button>
+                <a href="/logs-page-render" class="btn btn-secondary" id="get-logs-btn">
+                    <i class="fas fa-file-alt"></i>
+                    View Logs
+                </a>
+            </div>
+        </div>
+    </nav>
 
-        <tr>
-            <th>Site</th>
-            <th>Keyword</th>
-            <th>Title</th>
-            <th>URL</th>
-            <th>Snippet</th>
-            <th>Date</th>
-            <th>Image</th>
-            <th>Section</th>
-        </tr>
-    </thead>
-    <tbody id="table-body">
+    <!-- Main Content -->
+    <div class="container">
+        <h2 class="heading">
+            <i class="fas fa-table"></i>
+            Scraped Results
+        </h2>
 
-        {% for row in data %}
-        <tr>
-            <td>{{ row.site }}</td>
-            <td>{{ row.keyword }}</td>
-            <td>{{ row.title }}</td>
-            <td><a href="{{ row.url }}" target="_blank">Link</a></td>
-            <td>{{ row.snippet }}</td>
-            <td>{{ row.date }}</td>
-            <td><img src="{{ row.image }}" width="80"></td>
-            <td>{{ row.section }}</td>
-        </tr>
-    </tbody>
-    {% endfor %}
-  </table>
+        <div class="table-container">
+            <table id="resultsTable" cellpadding="8">
+                <thead id="table-head">
+                    <tr>
+                        <th><i class="fas fa-globe"></i> Site</th>
+                        <th><i class="fas fa-search"></i> Keyword</th>
+                        <th><i class="fas fa-heading"></i> Title</th>
+                        <th><i class="fas fa-link"></i> URL</th>
+                        <!-- <th><i class="fas fa-quote-left"></i> Snippet</th>
+                        <th><i class="fas fa-calendar"></i> Date</th>
+                        <th><i class="fas fa-image"></i> Image</th> -->
+                        <th><i class="fas fa-tag"></i> Section</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    {% for row in data %}
+                    <tr>
+                        <td>{{ row.site }}</td>
+                        <td>{{ row.keyword }}</td>
+                        <td>{{ row.title }}</td>
+                        <td><a href="{{ row.url }}" target="_blank">View Link</a></td>
+                        <!-- <td>{{ row.snippet }}</td>
+                        <td>{{ row.date }}</td>
+                        <td>
+                            {% if row.image %}
+                                <img src="{{ row.image }}" width="80" alt="Article Image">
+                            {% else %}
+                                <span class="no-image">No Image</span>
+                            {% endif %} -->
+                        </td>
+                        <td>{{ row.section }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-  <button id="refreshBtn">Fetch New Results</button>
-  <a href="/logs-page-render"><button id="get-logs-btn">Get Logs</button></a>
-  <p id="status"></p>
+        <p id="status">Ready to fetch new results</p>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Fetching new results...</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
