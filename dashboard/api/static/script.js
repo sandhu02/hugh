@@ -1,3 +1,89 @@
+
+// document.addEventListener("DOMContentLoaded", function () {
+//     const button = document.getElementById("refreshBtn");
+//     const status = document.getElementById("status");
+//     const table = document.getElementById("resultsTable");
+
+//     button.addEventListener("click", async function () {
+//         button.disabled = true;
+//         button.innerText = "Refreshing...";
+//         // status.innerText = "Fetching new results... please wait";
+
+//         try {
+//             const response = await fetch("/refresh-scraper");
+//             const result = await response.json();
+
+//             status.innerText = result.message;
+
+//             // clear old rows (except header)
+//             table.innerHTML = `
+//               <tr>
+//                 <th>Site</th>
+//                 <th>Keyword</th>
+//                 <th>Title</th>
+//                 <th>URL</th>
+//                 <th>Snippet</th>
+//                 <th>Date</th>
+//                 <th>Image</th>
+//                 <th>Section</th>
+//               </tr>`;
+
+//             // add new rows
+//             result.data.forEach(r => {
+//                 const row = table.insertRow();
+//                 row.innerHTML = `
+//                     <td>${r.site}</td>
+//                     <td>${r.keywords}</td>
+//                     <td>${r.title}</td>
+//                     <td><a href="${r.url}" target="_blank">Link</a></td>
+//                     <td>${r.snippet}</td>
+//                     <td>${r.date}</td>
+//                     <td><img src="${r.image}" width="80"></td>
+//                     <td>${r.section}</td>
+//                 `;
+//             });
+//             button.innerText = "Fetch New Results";
+//         } catch (err) {
+//             status.innerText = "Error fetching data.";
+//             button.innerText = "Fetch New Results";
+//             console.error(err);
+//         } finally {
+//             button.disabled = false;
+//         }
+//     });
+// });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Dropdown functionality
     function toggleDropdown() {
         dropdown.classList.toggle("active");
@@ -856,6 +942,7 @@
                         }
                     </td>
                     <td>${escapeHtml(rowData.section || '')}</td>
+                    <td>${escapeHtml(rowData.relevance || '')}</td>
                 `;
 
                 // Animate row entrance
@@ -881,47 +968,6 @@
         dropdown.classList.toggle("active");
     }
 
-    // Filter functionality
-    // function filterResults(category) {
-    //     const rows = tableBody.querySelectorAll('tr');
-    //     let visibleCount = 0;
-        
-        // rows.forEach(row => {
-        //     const cells = row.querySelectorAll('td');
-        //     if (cells.length === 0) return; // Skip if no cells (shouldn't happen)
-            
-        //     if (category === 'all') {
-        //         row.classList.remove('hidden');
-        //         visibleCount++;
-        //     } else {
-        //         const keyword = cells[1] ? cells[1].textContent.toLowerCase() : '';
-        //         const section = cells[7] ? cells[7].textContent.toLowerCase() : '';
-                
-        //         if (keyword.includes(category.toLowerCase()) || 
-        //             section.includes(category.toLowerCase())) {
-        //             row.classList.remove('hidden');
-        //             visibleCount++;
-        //         } else {
-        //             row.classList.add('hidden');
-        //         }
-        //     }
-        // });
-
-        // Update status
-    //     const statusMessage = category === 'all' ? 
-    //         `Showing all results (${visibleCount} items)` : 
-    //         `Filtered by: ${category} (${visibleCount} items)`;
-        
-    //     updateStatus(statusMessage);
-    //     dropdown.classList.remove('active');
-    // }
-
-    // function setActiveFilter(activeItem) {
-    //     // Remove active class from all items
-    //     dropdownItems.forEach(item => item.classList.remove('filter-active'));
-    //     // Add active class to clicked item
-    //     activeItem.classList.add('filter-active');
-    // }
 
     // Animation functions
     function addEntranceAnimations() {
@@ -1010,149 +1056,6 @@
     `;
     document.head.appendChild(style);
 
-    // Auto-refresh functionality (optional)
-    // let autoRefreshInterval;
-    
-    // function startAutoRefresh(minutes = 5) {
-    //     stopAutoRefresh(); // Clear any existing interval
-    //     autoRefreshInterval = setInterval(() => {
-    //         if (!refreshBtn.disabled) {
-    //             console.log('Auto-refreshing data...');
-    //             handleRefresh();
-    //         }
-    //     }, minutes * 60 * 1000);
-    // }
-
-    // function stopAutoRefresh() {
-    //     if (autoRefreshInterval) {
-    //         clearInterval(autoRefreshInterval);
-    //         autoRefreshInterval = null;
-    //     }
-    // }
-
-    // Uncomment the line below to enable auto-refresh every 5 minutes
-    // startAutoRefresh(5);
-
-    // Table search functionality
-    // function addSearchFunctionality() {
-    //     const searchContainer = document.createElement('div');
-    //     searchContainer.className = 'search-container';
-    //     searchContainer.innerHTML = `
-    //         <input type="text" id="tableSearch" placeholder="Search in table..." class="search-input">
-    //         <i class="fas fa-search search-icon"></i>
-    //     `;
-
-    //     const tableContainer = document.querySelector('.table-container');
-    //     tableContainer.parentNode.insertBefore(searchContainer, tableContainer);
-
-    //     const searchInput = document.getElementById('tableSearch');
-    //     searchInput.addEventListener('input', function() {
-    //         const searchTerm = this.value.toLowerCase();
-    //         const rows = tableBody.querySelectorAll('tr');
-    //         let visibleCount = 0;
-
-    //         rows.forEach(row => {
-    //             const cells = row.querySelectorAll('td');
-    //             let found = false;
-
-    //             cells.forEach(cell => {
-    //                 if (cell.textContent.toLowerCase().includes(searchTerm)) {
-    //                     found = true;
-    //                 }
-    //             });
-
-    //             if (found || searchTerm === '') {
-    //                 row.style.display = '';
-    //                 visibleCount++;
-    //             } else {
-    //                 row.style.display = 'none';
-    //             }
-    //         });
-
-    //         // Update status with search results
-    //         if (searchTerm) {
-    //             updateStatus(`Search results: ${visibleCount} items found`);
-    //         } else {
-    //             updateStatus('Ready to fetch new results');
-    //         }
-    //     });
-    // }
-
-    // Add search functionality (uncomment to enable)
-    // addSearchFunctionality();
-
-    // Export/download functionality
-    // function downloadTableAsCSV() {
-    //     const rows = [];
-    //     const headers = [];
-        
-    //     // Get headers
-    //     const headerCells = document.querySelectorAll('#table-head th');
-    //     headerCells.forEach(cell => {
-    //         headers.push(cell.textContent.replace(/\s+/g, ' ').trim());
-    //     });
-    //     rows.push(headers);
-
-    //     // Get visible data rows
-    //     const dataRows = tableBody.querySelectorAll('tr:not([style*="display: none"])');
-    //     dataRows.forEach(row => {
-    //         const rowData = [];
-    //         const cells = row.querySelectorAll('td');
-    //         cells.forEach(cell => {
-    //             // Handle links and images
-    //             let cellText = cell.textContent.trim();
-    //             const link = cell.querySelector('a');
-    //             if (link) {
-    //                 cellText = link.href;
-    //             }
-    //             rowData.push(cellText);
-    //         });
-    //         rows.push(rowData);
-    //     });
-
-    //     // Convert to CSV
-    //     const csvContent = rows.map(row => 
-    //         row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(',')
-    //     ).join('\n');
-
-    //     // Download
-    //     const blob = new Blob([csvContent], { type: 'text/csv' });
-    //     const url = window.URL.createObjectURL(blob);
-    //     const a = document.createElement('a');
-    //     a.href = url;
-    //     a.download = `scraper-results-${new Date().toISOString().split('T')[0]}.csv`;
-    //     document.body.appendChild(a);
-    //     a.click();
-    //     document.body.removeChild(a);
-    //     window.URL.revokeObjectURL(url);
-
-    //     updateStatus('Table exported as CSV successfully!', 'success');
-    // }
-
-    // Add export button to navbar (optional)
-    // function addExportButton() {
-    //     const exportBtn = document.createElement('button');
-    //     exportBtn.className = 'btn btn-secondary';
-    //     exportBtn.innerHTML = '<i class="fas fa-download"></i> Export CSV';
-    //     exportBtn.addEventListener('click', downloadTableAsCSV);
-
-    //     const navbarButtons = document.querySelector('.navbar-buttons');
-    //     navbarButtons.appendChild(exportBtn);
-    // }
-
-    // Uncomment to add export functionality
-    // addExportButton();
-
-    // Performance monitoring
-    // let lastRefreshTime = null;
-    
-    // function trackPerformance() {
-    //     if (lastRefreshTime) {
-    //         const timeDiff = Date.now() - lastRefreshTime;
-    //         console.log(`Time since last refresh: ${timeDiff / 1000}s`);
-    //     }
-    //     lastRefreshTime = Date.now();
-    // }
 
     // Error handling improvements
     window.addEventListener('error', function(e) {
@@ -1174,51 +1077,6 @@
         updateStatus('No internet connection', 'error');
     });
 
-    // Table utilities
-    // function sortTableByColumn(columnIndex, ascending = true) {
-    //     const rows = Array.from(tableBody.querySelectorAll('tr'));
-        
-    //     rows.sort((a, b) => {
-    //         const aVal = a.cells[columnIndex].textContent.trim();
-    //         const bVal = b.cells[columnIndex].textContent.trim();
-            
-    //         if (ascending) {
-    //             return aVal.localeCompare(bVal);
-    //         } else {
-    //             return bVal.localeCompare(aVal);
-    //         }
-    //     });
-
-    //     // Clear table body and re-add sorted rows
-    //     tableBody.innerHTML = '';
-    //     rows.forEach(row => tableBody.appendChild(row));
-    // }
-
-    // Add sorting functionality to headers (optional)
-    // function addSortingToHeaders() {
-    //     const headers = document.querySelectorAll('#table-head th');
-    //     headers.forEach((header, index) => {
-    //         header.style.cursor = 'pointer';
-    //         header.style.userSelect = 'none';
-            
-    //         let ascending = true;
-    //         header.addEventListener('click', () => {
-    //             // Remove sort indicators from other headers
-    //             headers.forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
-                
-    //             // Add sort indicator to current header
-    //             header.classList.add(ascending ? 'sort-asc' : 'sort-desc');
-                
-    //             sortTableByColumn(index, ascending);
-    //             ascending = !ascending;
-                
-    //             updateStatus(`Table sorted by ${header.textContent.trim()}`, 'success');
-    //         });
-    //     });
-    // }
-
-    // Uncomment to enable column sorting
-    // addSortingToHeaders();
 
     // Initialize tooltips for truncated content
     function addTooltips() {

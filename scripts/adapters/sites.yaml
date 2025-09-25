@@ -791,6 +791,7 @@ MiningNews.net:
     snippet: "p.strapline"
     date: "div.date"
     section: "h5.category a"
+    author: ""
   
 
 Australian Mining:  
@@ -807,15 +808,35 @@ Australian Mining:
     date: "span.mp-date time[itemprop='dateModified']"
   
 
-# Mining Weekly: 
-#   modes: [home_fetch]
-#   urls:
-#     - https://www.miningweekly.com/
+Mining Weekly: 
+  modes: [home_fetch]
+  urls:
+    - https://www.miningweekly.com/
+  selectors:
+    item: "div.card.card-border-none.item-spacing"
+    title: "a.headline-link.card-title"
+    url: "a.headline-link.card-title::attr(href)"
+    snippet: "p.card-text"
+    image: "a.image-link img::attr(src)"
+    category: "button.btn-news"
+    date: "span.cm-last-updated"
+    author: "span.cm-author-name-by a.cm-author-name"
+  
 
-# Energy News Bulletin: 
-#   modes: [home_fetch]
-#   urls:
-#     - https://www.energynewsbulletin.net/
+Energy News Bulletin: 
+  modes: [home_fetch]
+  urls:
+    - https://www.energynewsbulletin.net/
+  selectors:
+    item: "div.secondary-story-content"
+    title: "h4.headline a"
+    url: "h4.headline a::attr(href)"
+    snippet: "p.strapline"
+    image: ""
+    date: "div.date"
+    category: "h5.category a"
+    author: ""
+  
 
 # Oil & Gas Australia: 
 #   modes: [home_fetch]
