@@ -13,13 +13,15 @@
     rules/
       filters.json          # keywords, weights, regexes
       stopwords.txt
+  /logs/
+    logs.json    
   storage/
     store.py                # SQLite or LiteFS; JSONL fallback
   jobs/
     schedule.py             # cron/APS/Arq, per-site frequency
 /dashboard/
-  index.html
   api/
+    instance/
+    static/
+    templates/
     app.py                  # Flask/FastAPI read-only endpoints
-/logs/
-  ...

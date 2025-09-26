@@ -70,26 +70,34 @@ def refresh_scraper():
     # --- Step 1: Send results to GPT for relevance marking ---
     prompt = """
     You are a financial analyst AI. 
-    Mark the relevance of each article title for bankruptcy signals of a company in Europe.
-    Use ONLY one of these values: "High", "Medium", "Low".
-    Do not remove or group any objects.  
-    Return EXACTLY the same number of objects as received, preserving order.
-    
+    Your task is to classify news articles based on how strongly they signal bankruptcy or financial distress of a company in Europe.
+
+    Rules for classification:
+    - "High": Clear or direct bankruptcy/distress signals.
+    Examples: "files for bankruptcy", "liquidation", "default", "CEO resignation due to financial loss", "mass layoffs from financial collapse".
+    - "Medium": Indirect but concerning signals.
+    Examples: "profit warning", "major revenue decline", "debt restructuring", "credit downgrade".
+    - "Low": Weak or unrelated signals.
+    Examples: general market news, product launches, management changes without financial cause.
+
+    Use ONLY: "High", "Medium", or "Low".  
+    Do not remove or group any objects. Return EXACTLY the same number of objects as received, preserving order.
+
     Return STRICT JSON in this exact format:
     {
-      "results": [
+    "results": [
         {
-          "site": "...",
-          "keywords": "...",
-          "title": "...",
-          "url": "...",
-          "snippet": "...",
-          "date": "...",
-          "image": "...",
-          "section": "...",
-          "relevance": "High" | "Medium" | "Low"
+        "site": "...",
+        "keywords": "...",
+        "title": "...",
+        "url": "...",
+        "snippet": "...",
+        "date": "...",
+        "image": "...",
+        "section": "...",
+        "relevance": "High" | "Medium" | "Low"
         }
-      ]
+    ]
     }
     """
 

@@ -1,0 +1,7 @@
+Flask
+Flask-SQLAlchemy
+openai
+python-dotenv
+beautifulsoup4
+requests
+selenium
