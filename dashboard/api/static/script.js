@@ -1,4 +1,3 @@
-// API Base URL - Point to your Flask backend
 const API_BASE = '/api';
 
 // State management
@@ -22,11 +21,7 @@ function debugLog(message, data = null) {
     }
 }
 
-window.onload = function() {
-    loadInitialData();
-};
-
-// Initialize the application
+// Initialize the application - FIXED: Removed duplicate initialization
 document.addEventListener('DOMContentLoaded', function() {
     debugLog('Initializing application...');
     initializeNavigation();
@@ -67,53 +62,66 @@ function initializeNavigation() {
     });
 }
 
-// Dashboard Section
+// Dashboard Section - FIXED: Added proper event listeners
 function initializeDashboard() {
     // Custom prompt character counter
     const promptTextarea = document.getElementById('custom-prompt');
     const charCount = document.getElementById('char-count');
     
-    promptTextarea.addEventListener('input', function() {
-        charCount.textContent = this.value.length;
-    });
+    if (promptTextarea && charCount) {
+        promptTextarea.addEventListener('input', function() {
+            charCount.textContent = this.value.length;
+        });
+    }
 
+    // Prompt management - FIXED: Added null checks
+    const savePromptBtn = document.getElementById('save-prompt');
+    const clearPromptBtn = document.getElementById('clear-prompt');
+    const addKeywordBtn = document.getElementById('add-keyword');
+    const saveKeywordsBtn = document.getElementById('save-keywords');
+    const resetKeywordsBtn = document.getElementById('reset-keywords');
+    const newKeywordInput = document.getElementById('new-keyword');
     
-    
-    // Prompt management
-    document.getElementById('save-prompt').addEventListener('click', saveCustomPrompt);
-    document.getElementById('clear-prompt').addEventListener('click', clearActivePrompt);
-    
-    // Keywords management
-    document.getElementById('add-keyword').addEventListener('click', addNewKeyword);
-    document.getElementById('save-keywords').addEventListener('click', saveKeywords);
-    document.getElementById('reset-keywords').addEventListener('click', resetKeywords);
+    if (savePromptBtn) savePromptBtn.addEventListener('click', saveCustomPrompt);
+    if (clearPromptBtn) clearPromptBtn.addEventListener('click', clearActivePrompt);
+    if (addKeywordBtn) addKeywordBtn.addEventListener('click', addNewKeyword);
+    if (saveKeywordsBtn) saveKeywordsBtn.addEventListener('click', saveKeywords);
+    if (resetKeywordsBtn) resetKeywordsBtn.addEventListener('click', resetKeywords);
     
     // Enter key for adding keywords
-    document.getElementById('new-keyword').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            addNewKeyword();
-        }
-    });
+    if (newKeywordInput) {
+        newKeywordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addNewKeyword();
+            }
+        });
+    }
 }
 
-// Scrap Results Section
+// Scrap Results Section - FIXED: Added null checks
 function initializeScrapResults() {
-    // Refresh scraper button
-    document.getElementById('refresh-scraper').addEventListener('click', refreshScraper);
+    const refreshScraperBtn = document.getElementById('refresh-scraper');
+    const relevanceFilter = document.getElementById('relevance-filter');
+    const siteFilter = document.getElementById('site-filter');
+    const keywordFilter = document.getElementById('keyword-filter');
+    const sectionFilter = document.getElementById('section-filter');
+    const clearFiltersBtn = document.getElementById('clear-filters');
     
-    // Filter functionality
-    document.getElementById('relevance-filter').addEventListener('change', filterScrapResults);
-    document.getElementById('site-filter').addEventListener('input', filterScrapResults);
-    document.getElementById('keyword-filter').addEventListener('input', filterScrapResults);
-    document.getElementById('section-filter').addEventListener('input', filterScrapResults);
-    document.getElementById('clear-filters').addEventListener('click', clearScrapFilters);
+    if (refreshScraperBtn) refreshScraperBtn.addEventListener('click', refreshScraper);
+    if (relevanceFilter) relevanceFilter.addEventListener('change', filterScrapResults);
+    if (siteFilter) siteFilter.addEventListener('input', filterScrapResults);
+    if (keywordFilter) keywordFilter.addEventListener('input', filterScrapResults);
+    if (sectionFilter) sectionFilter.addEventListener('input', filterScrapResults);
+    if (clearFiltersBtn) clearFiltersBtn.addEventListener('click', clearScrapFilters);
 }
 
-// Logs Section
+// Logs Section - FIXED: Added null checks
 function initializeLogs() {
-    // Logs filter
-    document.getElementById('logs-date-filter').addEventListener('change', filterLogs);
-    document.getElementById('clear-logs-filters').addEventListener('click', clearLogsFilter);
+    const logsDateFilter = document.getElementById('logs-date-filter');
+    const clearLogsFiltersBtn = document.getElementById('clear-logs-filters');
+    
+    if (logsDateFilter) logsDateFilter.addEventListener('change', filterLogs);
+    if (clearLogsFiltersBtn) clearLogsFiltersBtn.addEventListener('click', clearLogsFilter);
 }
 
 // Load initial data
@@ -206,6 +214,8 @@ async function loadKeywords() {
 
 function renderKeywords() {
     const container = document.getElementById('keywords-container');
+    if (!container) return;
+    
     container.innerHTML = '';
     
     if (currentKeywords.length === 0) {
@@ -228,11 +238,15 @@ function renderKeywords() {
 
 function updateKeywordStats() {
     const countElement = document.getElementById('keyword-count');
-    countElement.textContent = `${currentKeywords.length} keywords`;
+    if (countElement) {
+        countElement.textContent = `${currentKeywords.length} keywords`;
+    }
 }
 
 function addNewKeyword() {
     const input = document.getElementById('new-keyword');
+    if (!input) return;
+    
     const keyword = input.value.trim();
     
     if (keyword) {
@@ -260,6 +274,8 @@ function editKeyword(index) {
 }
 
 function deleteKeyword(index) {
+    if (index < 0 || index >= currentKeywords.length) return;
+    
     const deletedKeyword = currentKeywords[index];
     currentKeywords.splice(index, 1);
     renderKeywords();
@@ -308,8 +324,7 @@ async function loadPrompts() {
     try {
         debugLog('Loading prompts...');
         const data = await apiCall('/get-prompts');
-        console.log("dddddddd")
-        console.log(data);
+        console.log("Prompts data:", data);
         promptsData = data.prompts || [];
         renderPrompts(promptsData);
         
@@ -321,12 +336,13 @@ async function loadPrompts() {
         debugLog('Prompts loaded:', promptsData);
     } catch (error) {
         console.error('Error loading prompts:', error);
-        // showNotification('Error loading prompts: ' + error.message, 'error');
+        showNotification('Error loading prompts: ' + error.message, 'error');
     }
 }
 
 function renderPrompts(prompts) {
     const container = document.getElementById('prompts-list');
+    if (!container) return;
     
     if (prompts.length === 0) {
         container.innerHTML = '<div class="empty-state">No saved prompts yet</div>';
@@ -358,11 +374,17 @@ function renderPrompts(prompts) {
 
 function displayActivePromptInEditWindow(prompt) {
     const promptTextarea = document.getElementById('custom-prompt');
-    if (prompt) {
-        // promptTextarea.value = '';
-        promptTextarea.value = prompt.prompt;
-        document.getElementById('char-count').textContent = prompt.prompt.length;
-    }   
+    const charCount = document.getElementById('char-count');
+    
+    if (promptTextarea && charCount) {
+        if (prompt) {
+            promptTextarea.value = prompt.prompt;
+            charCount.textContent = prompt.prompt.length;
+        } else {
+            promptTextarea.value = '';
+            charCount.textContent = '0';
+        }
+    }
 }
 
 function updateActivePromptDisplay(prompt) {
@@ -370,20 +392,25 @@ function updateActivePromptDisplay(prompt) {
     const text = document.getElementById('active-prompt-text');
     const status = document.getElementById('active-prompt-status');
     
-    if (prompt) {
-        text.textContent = prompt.prompt;
-        display.style.display = 'block';
-        status.textContent = 'Active prompt configured';
-        status.style.color = 'var(--success-color)';
-    } else {
-        display.style.display = 'none';
-        status.textContent = 'No active prompt';
-        status.style.color = 'var(--text-muted)';
+    if (display && text && status) {
+        if (prompt) {
+            text.textContent = prompt.prompt;
+            display.style.display = 'block';
+            status.textContent = 'Active prompt configured';
+            status.style.color = 'var(--success-color)';
+        } else {
+            display.style.display = 'none';
+            status.textContent = 'No active prompt';
+            status.style.color = 'var(--text-muted)';
+        }
     }
 }
 
 async function saveCustomPrompt() {
-    const promptText = document.getElementById('custom-prompt').value.trim();
+    const promptTextarea = document.getElementById('custom-prompt');
+    if (!promptTextarea) return;
+    
+    const promptText = promptTextarea.value.trim();
     
     if (!promptText) {
         showNotification('Please enter a prompt', 'error');
@@ -403,7 +430,7 @@ async function saveCustomPrompt() {
         });
         
         // Clear the textarea
-        document.getElementById('custom-prompt').value = '';
+        promptTextarea.value = '';
         document.getElementById('char-count').textContent = '0';
         
         // Reload prompts to show the new active one
@@ -491,6 +518,8 @@ async function loadScrapResults() {
     const emptyElement = document.getElementById('scrap-empty');
     const tableBody = document.getElementById('scrap-results-body');
     
+    if (!loadingElement || !emptyElement || !tableBody) return;
+    
     loadingElement.style.display = 'block';
     emptyElement.style.display = 'none';
     tableBody.innerHTML = '';
@@ -523,6 +552,8 @@ async function loadScrapResults() {
 
 function renderScrapResults(data) {
     const tableBody = document.getElementById('scrap-results-body');
+    if (!tableBody) return;
+    
     tableBody.innerHTML = '';
     
     if (data.length === 0) {
@@ -546,7 +577,7 @@ function renderScrapResults(data) {
             </td>
             <td>${escapeHtml(item.section || 'N/A')}</td>
             <td>
-                <span class="relevance-badge relevance-${item.relevance || 'Low'}">
+                <span class="relevance-badge relevance-${(item.relevance || 'Low').toLowerCase()}">
                     ${item.relevance || 'Low'}
                 </span>
             </td>
@@ -560,8 +591,12 @@ function updateScrapResultsStats() {
     const countElement = document.getElementById('results-count');
     const updatedElement = document.getElementById('last-updated');
     
-    countElement.textContent = `${scrapData.length} results`;
-    updatedElement.textContent = `Last updated: ${new Date().toLocaleString()}`;
+    if (countElement) {
+        countElement.textContent = `${scrapData.length} results`;
+    }
+    if (updatedElement) {
+        updatedElement.textContent = `Last updated: ${new Date().toLocaleString()}`;
+    }
 }
 
 async function refreshScraper() {
@@ -584,16 +619,23 @@ async function refreshScraper() {
 }
 
 function filterScrapResults() {
-    const relevanceFilter = document.getElementById('relevance-filter').value;
-    const siteFilter = document.getElementById('site-filter').value.toLowerCase();
-    const keywordFilter = document.getElementById('keyword-filter').value.toLowerCase();
-    const sectionFilter = document.getElementById('section-filter').value.toLowerCase();
+    const relevanceFilter = document.getElementById('relevance-filter');
+    const siteFilter = document.getElementById('site-filter');
+    const keywordFilter = document.getElementById('keyword-filter');
+    const sectionFilter = document.getElementById('section-filter');
+    
+    if (!relevanceFilter || !siteFilter || !keywordFilter || !sectionFilter) return;
+    
+    const relevanceValue = relevanceFilter.value;
+    const siteValue = siteFilter.value.toLowerCase();
+    const keywordValue = keywordFilter.value.toLowerCase();
+    const sectionValue = sectionFilter.value.toLowerCase();
     
     const filteredData = scrapData.filter(item => {
-        const matchesRelevance = !relevanceFilter || item.relevance === relevanceFilter;
-        const matchesSite = !siteFilter || (item.site && item.site.toLowerCase().includes(siteFilter));
-        const matchesKeyword = !keywordFilter || (item.keywords && item.keywords.toLowerCase().includes(keywordFilter));
-        const matchesSection = !sectionFilter || (item.section && item.section.toLowerCase().includes(sectionFilter));
+        const matchesRelevance = !relevanceValue || (item.relevance && item.relevance.toLowerCase() === relevanceValue.toLowerCase());
+        const matchesSite = !siteValue || (item.site && item.site.toLowerCase().includes(siteValue));
+        const matchesKeyword = !keywordValue || (item.keywords && item.keywords.toLowerCase().includes(keywordValue));
+        const matchesSection = !sectionValue || (item.section && item.section.toLowerCase().includes(sectionValue));
         
         return matchesRelevance && matchesSite && matchesKeyword && matchesSection;
     });
@@ -602,10 +644,16 @@ function filterScrapResults() {
 }
 
 function clearScrapFilters() {
-    document.getElementById('relevance-filter').value = '';
-    document.getElementById('site-filter').value = '';
-    document.getElementById('keyword-filter').value = '';
-    document.getElementById('section-filter').value = '';
+    const relevanceFilter = document.getElementById('relevance-filter');
+    const siteFilter = document.getElementById('site-filter');
+    const keywordFilter = document.getElementById('keyword-filter');
+    const sectionFilter = document.getElementById('section-filter');
+    
+    if (relevanceFilter) relevanceFilter.value = '';
+    if (siteFilter) siteFilter.value = '';
+    if (keywordFilter) keywordFilter.value = '';
+    if (sectionFilter) sectionFilter.value = '';
+    
     renderScrapResults(scrapData);
 }
 
@@ -613,6 +661,8 @@ async function loadLogs() {
     const loadingElement = document.getElementById('logs-loading');
     const emptyElement = document.getElementById('logs-empty');
     const tableBody = document.getElementById('logs-body');
+    
+    if (!loadingElement || !emptyElement || !tableBody) return;
     
     loadingElement.style.display = 'block';
     emptyElement.style.display = 'none';
@@ -645,6 +695,8 @@ async function loadLogs() {
 
 function renderLogs(data) {
     const tableBody = document.getElementById('logs-body');
+    if (!tableBody) return;
+    
     tableBody.innerHTML = '';
     
     if (data.length === 0) {
@@ -665,18 +717,17 @@ function renderLogs(data) {
     });
 }
 
-
-
-
-
-
 function filterLogs() {
-    const dateFilter = document.getElementById('logs-date-filter').value.trim();
+    const dateFilter = document.getElementById('logs-date-filter');
     const emptyElement = document.getElementById('logs-empty');
     
-    debugLog('Applying date filter:', dateFilter);
+    if (!dateFilter || !emptyElement) return;
     
-    if (!dateFilter) {
+    const dateFilterValue = dateFilter.value.trim();
+    
+    debugLog('Applying date filter:', dateFilterValue);
+    
+    if (!dateFilterValue) {
         // No filter - show all logs
         renderLogs(logsData);
         emptyElement.style.display = logsData.length === 0 ? 'block' : 'none';
@@ -685,7 +736,7 @@ function filterLogs() {
     }
     
     // Validate date format
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateFilter)) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateFilterValue)) {
         showNotification('Invalid date format. Please use YYYY-MM-DD', 'error');
         return;
     }
@@ -697,13 +748,13 @@ function filterLogs() {
         // Extract YYYY-MM-DD from the original scrape_start format
         // Format: "2025-09-29T12:17:22.846799+00:00Z"
         const logDate = log.scrape_start.split('T')[0];
-        return logDate === dateFilter;
+        return logDate === dateFilterValue;
     });
     
     debugLog('Filter results:', {
         totalLogs: logsData.length,
         filteredLogs: filteredLogs.length,
-        dateFilter: dateFilter
+        dateFilter: dateFilterValue
     });
     
     // Render the filtered results
@@ -712,32 +763,39 @@ function filterLogs() {
     
     // Show filter status
     if (filteredLogs.length === 0) {
-        showNotification(`No logs found for date: ${dateFilter}`, 'info');
+        showNotification(`No logs found for date: ${dateFilterValue}`, 'info');
     } else {
-        showNotification(`Showing ${filteredLogs.length} logs for ${dateFilter}`, 'success');
+        showNotification(`Showing ${filteredLogs.length} logs for ${dateFilterValue}`, 'success');
     }
 }
 
 function clearLogsFilter() {
-    document.getElementById('logs-date-filter').value = '';
+    const dateFilter = document.getElementById('logs-date-filter');
+    const emptyElement = document.getElementById('logs-empty');
+    
+    if (dateFilter) dateFilter.value = '';
     debugLog('Cleared logs filter');
     renderLogs(logsData);
-    document.getElementById('logs-empty').style.display = logsData.length === 0 ? 'block' : 'none';
+    if (emptyElement) {
+        emptyElement.style.display = logsData.length === 0 ? 'block' : 'none';
+    }
     showNotification(`Showing all ${logsData.length} logs`, 'info');
 }
 
 // Utility Functions
 function showLoading(message = 'Processing...') {
-    loadingMessage.textContent = message;
-    loadingOverlay.classList.add('active');
+    if (loadingMessage) loadingMessage.textContent = message;
+    if (loadingOverlay) loadingOverlay.classList.add('active');
 }
 
 function hideLoading() {
-    loadingOverlay.classList.remove('active');
+    if (loadingOverlay) loadingOverlay.classList.remove('active');
 }
 
 function showNotification(message, type = 'info') {
     const notification = document.getElementById('notification');
+    if (!notification) return;
+    
     notification.textContent = message;
     notification.className = `notification ${type} show`;
     
