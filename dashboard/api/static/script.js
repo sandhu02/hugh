@@ -1,1099 +1,820 @@
+// API Base URL - Point to your Flask backend
+const API_BASE = '/api';
 
-// document.addEventListener("DOMContentLoaded", function () {
-//     const button = document.getElementById("refreshBtn");
-//     const status = document.getElementById("status");
-//     const table = document.getElementById("resultsTable");
+// State management
+let currentKeywords = [];
+let scrapData = [];
+let logsData = [];
+let promptsData = [];
 
-//     button.addEventListener("click", async function () {
-//         button.disabled = true;
-//         button.innerText = "Refreshing...";
-//         // status.innerText = "Fetching new results... please wait";
+// DOM Elements
+const navButtons = document.querySelectorAll('.nav-btn');
+const contentSections = document.querySelectorAll('.content-section');
+const loadingOverlay = document.getElementById('loading-overlay');
+const loadingMessage = document.getElementById('loading-message');
 
-//         try {
-//             const response = await fetch("/refresh-scraper");
-//             const result = await response.json();
+// Debug mode
+const DEBUG = true;
 
-//             status.innerText = result.message;
-
-//             // clear old rows (except header)
-//             table.innerHTML = `
-//               <tr>
-//                 <th>Site</th>
-//                 <th>Keyword</th>
-//                 <th>Title</th>
-//                 <th>URL</th>
-//                 <th>Snippet</th>
-//                 <th>Date</th>
-//                 <th>Image</th>
-//                 <th>Section</th>
-//               </tr>`;
-
-//             // add new rows
-//             result.data.forEach(r => {
-//                 const row = table.insertRow();
-//                 row.innerHTML = `
-//                     <td>${r.site}</td>
-//                     <td>${r.keywords}</td>
-//                     <td>${r.title}</td>
-//                     <td><a href="${r.url}" target="_blank">Link</a></td>
-//                     <td>${r.snippet}</td>
-//                     <td>${r.date}</td>
-//                     <td><img src="${r.image}" width="80"></td>
-//                     <td>${r.section}</td>
-//                 `;
-//             });
-//             button.innerText = "Fetch New Results";
-//         } catch (err) {
-//             status.innerText = "Error fetching data.";
-//             button.innerText = "Fetch New Results";
-//             console.error(err);
-//         } finally {
-//             button.disabled = false;
-//         }
-//     });
-// });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Dropdown functionality
-    function toggleDropdown() {
-        dropdown.classList.toggle("active");
-        // Clear search when opening dropdown
-        if (dropdown.classList.contains("active")) {
-            categorySearch.value = '';
-            filterCategorySearch();
-        }
+function debugLog(message, data = null) {
+    if (DEBUG) {
+        console.log(`[DEBUG] ${message}`, data || '');
     }
-
-    // Rest of the existing functions with some updates...
-    function setLoadingState(isLoading) {
-        if (isLoading) {
-            refreshBtn.disabled = true;
-            refreshBtn.classList.add("btn-loading");
-            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
-        } else {
-            refreshBtn.disabled = false;
-            refreshBtn.classList.remove("btn-loading");
-            refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Fetch New Results';
-        }
-    }
-
-    function showLoadingOverlay(show) {
-        if (show) {
-            loadingOverlay.classList.add("active");
-        } else {
-            loadingOverlay.classList.remove("active");
-        }
-    }
-
-    function updateStatus(message, type = "default") {
-        status.textContent = message;
-        
-        // Remove existing status classes
-        status.classList.remove("loading", "success", "error");
-        
-        // Add new status class
-        if (type !== "default") {
-            status.classList.add(type);
-        }
-
-        // Auto-clear status after 5 seconds for success/error
-        if (type === "success" || type === "error") {
-            setTimeout(() => {
-                status.textContent = "Ready to fetch new results";
-                status.classList.remove("loading", "success", "error");
-            }, 5000);
-        }
-    }
-
-    function updateTable(data) {
-        // Clear existing table body
-        tableBody.innerHTML = "";
-        
-        // Check if data exists and is an array
-        if (!data || !Array.isArray(data)) {
-            const noDataRow = tableBody.insertRow();
-            noDataRow.innerHTML = `
-                <td colspan="8" style="text-align: center; padding: 2rem; color: #666;">
-                    No data available
-                </td>
-            `;
-            return;
-        }
-
-        // Add new rows with animation
-        data.forEach((rowData, index) => {
-            setTimeout(() => {
-                const row = tableBody.insertRow();
-                row.style.opacity = "0";
-                row.style.transform = "translateY(20px)";
-                
-                // Create table cell content
-                row.innerHTML = `
-                    <td>${escapeHtml(rowData.site || '')}</td>
-                    <td>${escapeHtml(rowData.keywords || rowData.keyword || '')}</td>
-                    <td>${escapeHtml(rowData.title || '')}</td>
-                    <td>
-                        ${rowData.url ? 
-                            `<a href="${escapeHtml(rowData.url)}" target="_blank">View Link</a>` : 
-                            '<span class="no-link">No URL</span>'
-                        }
-                    </td>
-                    <td>${escapeHtml(rowData.snippet || '')}</td>
-                    <td>${escapeHtml(rowData.date || '')}</td>
-                    <td>
-                        ${rowData.image ? 
-                            `<img src="${escapeHtml(rowData.image)}" width="80" alt="Article Image" onerror="this.style.display='none'">` : 
-                            '<span class="no-image">No Image</span>'
-                        }
-                    </td>
-                    <td>${escapeHtml(rowData.section || '')}</td>
-                `;
-
-                // Animate row entrance
-                setTimeout(() => {
-                    row.style.transition = "all 0.5s ease";
-                    row.style.opacity = "1";
-                    row.style.transform = "translateY(0)";
-                }, 50);
-
-            }, index * 100);
-        });
-
-        // Update categories after table update
-        setTimeout(() => {
-            populateCategoriesFromExistingData();
-        }, data.length * 100 + 500);
-    }
-
-    // Utility function to escape HTML
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    // Animation functions
-    function addEntranceAnimations() {
-        const rows = tableBody.querySelectorAll('tr');
-        rows.forEach((row, index) => {
-            row.style.opacity = '0';
-            row.style.transform = 'translateY(20px)';
-            setTimeout(() => {
-                row.style.transition = 'all 0.5s ease';
-                row.style.opacity = '1';
-                row.style.transform = 'translateY(0)';
-            }, index * 100);
-        });
-    }
-
-    function showSuccessAnimation() {
-        // Add a subtle success animation to the table
-        const tableContainer = document.querySelector('.table-container');
-        tableContainer.style.transform = 'scale(1.02)';
-        setTimeout(() => {
-            tableContainer.style.transition = 'transform 0.3s ease';
-            tableContainer.style.transform = 'scale(1)';
-        }, 200);
-    }
-
-    function showErrorAnimation() {
-        // Add a subtle shake animation for errors
-        const tableContainer = document.querySelector('.table-container');
-        tableContainer.style.animation = 'shake 0.5s ease-in-out';
-        setTimeout(() => {
-            tableContainer.style.animation = '';
-        }, 500);
-    }
-
-    // Scroll to top functionality
-    function createScrollToTopButton() {
-        const scrollBtn = document.createElement('button');
-        scrollBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
-        scrollBtn.className = 'scroll-top';
-        scrollBtn.setAttribute('aria-label', 'Scroll to top');
-        
-        scrollBtn.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-
-        document.body.appendChild(scrollBtn);
-    }
-
-    function handleScroll() {
-        const scrollBtn = document.querySelector('.scroll-top');
-        if (window.pageYOffset > 300) {
-            scrollBtn.classList.add('visible');
-        } else {
-            scrollBtn.classList.remove('visible');
-        }
-    }
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', function(e) {
-        // Ctrl/Cmd + R for refresh (prevent default browser refresh)
-        if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
-            e.preventDefault();
-            if (!refreshBtn.disabled) {
-                handleRefresh();
-            }
-        }
-
-        // Escape to close dropdown
-        if (e.key === 'Escape') {
-            dropdown.classList.remove('active');
-        }
-
-        // Ctrl/Cmd + F to focus search
-        if ((e.ctrlKey || e.metaKey) && e.key === 'f' && dropdown.classList.contains('active')) {
-            e.preventDefault();
-            categorySearch.focus();
-        }
-    });
-
-    // Add CSS for shake animation
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
-        }
-    `;
-    document.head.appendChild(style);
-
-    // Auto-refresh functionality (optional)
-    let autoRefreshInterval;
-    
-    function startAutoRefresh(minutes = 5) {
-        stopAutoRefresh(); // Clear any existing interval
-        autoRefreshInterval = setInterval(() => {
-            if (!refreshBtn.disabled) {
-                console.log('Auto-refreshing data...');
-                handleRefresh();
-            }
-        }, minutes * 60 * 1000);
-    }
-
-    function stopAutoRefresh() {
-        if (autoRefreshInterval) {
-            clearInterval(autoRefreshInterval);
-            autoRefreshInterval = null;
-        }
-    }
-
-    // Uncomment the line below to enable auto-refresh every 5 minutes
-    // startAutoRefresh(5);
-
-    // Table search functionality
-    function addSearchFunctionality() {
-        const searchContainer = document.createElement('div');
-        searchContainer.className = 'search-container';
-        searchContainer.innerHTML = `
-            <input type="text" id="tableSearch" placeholder="Search in table..." class="search-input">
-            <i class="fas fa-search search-icon"></i>
-        `;
-
-        const tableContainer = document.querySelector('.table-container');
-        tableContainer.parentNode.insertBefore(searchContainer, tableContainer);
-
-        const searchInput = document.getElementById('tableSearch');
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = tableBody.querySelectorAll('tr');
-            let visibleCount = 0;
-
-            rows.forEach(row => {
-                const cells = row.querySelectorAll('td');
-                let found = false;
-
-                cells.forEach(cell => {
-                    if (cell.textContent.toLowerCase().includes(searchTerm)) {
-                        found = true;
-                    }
-                });
-
-                if (found || searchTerm === '') {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-
-            // Update status with search results
-            if (searchTerm) {
-                updateStatus(`Search results: ${visibleCount} items found`);
-            } else {
-                updateStatus('Ready to fetch new results');
-            }
-        });
-    }
-
-    // Add search functionality (uncomment to enable)
-    // addSearchFunctionality();
-
-    // Export/download functionality
-    function downloadTableAsCSV() {
-        const rows = [];
-        const headers = [];
-        
-        // Get headers
-        const headerCells = document.querySelectorAll('#table-head th');
-        headerCells.forEach(cell => {
-            headers.push(cell.textContent.replace(/\s+/g, ' ').trim());
-        });
-        rows.push(headers);
-
-        // Get visible data rows
-        const dataRows = tableBody.querySelectorAll('tr:not([style*="display: none"]):not(.hidden)');
-        dataRows.forEach(row => {
-            const rowData = [];
-            const cells = row.querySelectorAll('td');
-            cells.forEach(cell => {
-                // Handle links and images
-                let cellText = cell.textContent.trim();
-                const link = cell.querySelector('a');
-                if (link) {
-                    cellText = link.href;
-                }
-                rowData.push(cellText);
-            });
-            rows.push(rowData);
-        });
-
-        // Convert to CSV
-        const csvContent = rows.map(row => 
-            row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(',')
-        ).join('\n');
-
-        // Download
-        const blob = new Blob([csvContent], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `scraper-results-${new Date().toISOString().split('T')[0]}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-
-        updateStatus('Table exported as CSV successfully!', 'success');
-    }
-
-    // Add export button to navbar (optional)
-    function addExportButton() {
-        const exportBtn = document.createElement('button');
-        exportBtn.className = 'btn btn-secondary';
-        exportBtn.innerHTML = '<i class="fas fa-download"></i> Export CSV';
-        exportBtn.addEventListener('click', downloadTableAsCSV);
-
-        const navbarButtons = document.querySelector('.navbar-buttons');
-        navbarButtons.appendChild(exportBtn);
-    }
-
-    // Uncomment to add export functionality
-    // addExportButton();
-
-    // Error handling improvements
-    window.addEventListener('error', function(e) {
-        console.error('JavaScript Error:', e.error);
-        updateStatus('An unexpected error occurred. Please refresh the page.', 'error');
-    });
-
-    window.addEventListener('unhandledrejection', function(e) {
-        console.error('Unhandled Promise Rejection:', e.reason);
-        updateStatus('Network error occurred. Please check your connection.', 'error');
-    });
-
-    // Network status monitoring
-    window.addEventListener('online', function() {
-        updateStatus('Connection restored', 'success');
-    });
-
-    window.addEventListener('offline', function() {
-        updateStatus('No internet connection', 'error');
-    });
-
-    // Initialize tooltips for truncated content
-    function addTooltips() {
-        const cells = document.querySelectorAll('#table-body td');
-        cells.forEach(cell => {
-            if (cell.scrollWidth > cell.clientWidth) {
-                cell.title = cell.textContent.trim();
-            }
-        });
-    }
-
-    // Call addTooltips after table updates
-    const originalUpdateTable = updateTable;
-    updateTable = function(data) {
-        originalUpdateTable(data);
-        setTimeout(addTooltips, 100);
-    };
-
-    console.log('Dynamic Category Scraper Dashboard initialized successfully!');
-    document.addEventListener("DOMContentLoaded", function() {
-    // Get DOM elements
-    const refreshBtn = document.getElementById("refreshBtn");
-    const status = document.getElementById("status");
-    const table = document.getElementById("resultsTable");
-    const tableBody = document.getElementById("table-body");
-    const dropdownToggle = document.getElementById("dropdownToggle");
-    const dropdown = document.querySelector('.dropdown');
-    const loadingOverlay = document.getElementById("loadingOverlay");
-    
-    // New elements for dynamic categories
-    const filterButtonText = document.getElementById("filterButtonText");
-    const categoryDropdown = document.getElementById("categoryDropdown");
-    const dropdownItemsContainer = document.getElementById("dropdownItemsContainer");
-    const selectAllBtn = document.getElementById("selectAllBtn");
-    const clearAllBtn = document.getElementById("clearAllBtn");
-    const applyFiltersBtn = document.getElementById("applyFiltersBtn");
-    const categorySearch = document.getElementById("categorySearch");
-
-    // State management
-    let allCategories = new Set();
-    let selectedCategories = new Set(['all']);
-    let categoryData = new Map(); // Store category -> count mapping
-
-    // Initialize the page
-    init();
-
-    function init() {
-        setupEventListeners();
-        addEntranceAnimations();
-        createScrollToTopButton();
-        populateCategoriesFromExistingData();
-    }
-
-    function setupEventListeners() {
-        // Refresh button click event
-        refreshBtn.addEventListener("click", handleRefresh);
-
-        // Dropdown toggle
-        dropdownToggle.addEventListener("click", toggleDropdown);
-
-        // Category filter controls
-        selectAllBtn.addEventListener("click", selectAllCategories);
-        clearAllBtn.addEventListener("click", clearAllCategories);
-        applyFiltersBtn.addEventListener("click", applySelectedFilters);
-        categorySearch.addEventListener("input", filterCategorySearch);
-
-        // Close dropdown when clicking outside
-        document.addEventListener("click", function(event) {
-            if (!dropdown.contains(event.target)) {
-                dropdown.classList.remove("active");
-            }
-        });
-
-        // Scroll to top functionality
-        window.addEventListener("scroll", handleScroll);
-    }
-
-    // Populate categories from existing table data
-    function populateCategoriesFromExistingData() {
-        const rows = tableBody.querySelectorAll('tr');
-        const categories = new Set();
-        const categoryCounts = new Map();
-
-        rows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            if (cells.length > 1) {
-                const keyword = cells[1].textContent.trim().toLowerCase();
-                const section = cells[7] ? cells[7].textContent.trim().toLowerCase() : '';
-                
-                if (keyword) {
-                    categories.add(keyword);
-                    categoryCounts.set(keyword, (categoryCounts.get(keyword) || 0) + 1);
-                }
-                if (section && section !== keyword) {
-                    categories.add(section);
-                    categoryCounts.set(section, (categoryCounts.get(section) || 0) + 1);
-                }
-            }
-        });
-
-        allCategories = categories;
-        categoryData = categoryCounts;
-        renderCategoryDropdown();
-    }
-
-    // Render the category dropdown with checkboxes
-    function renderCategoryDropdown() {
-        // Keep the "Show All" option
-        const allOption = dropdownItemsContainer.querySelector('.dropdown-item-checkbox');
-        dropdownItemsContainer.innerHTML = '';
-        dropdownItemsContainer.appendChild(allOption);
-
-        if (allCategories.size === 0) {
-            const noCategories = document.createElement('div');
-            noCategories.className = 'no-categories';
-            noCategories.textContent = 'No categories found';
-            dropdownItemsContainer.appendChild(noCategories);
-            return;
-        }
-
-        // Sort categories alphabetically
-        const sortedCategories = Array.from(allCategories).sort();
-
-        sortedCategories.forEach(category => {
-            const categoryItem = createCategoryCheckbox(category, categoryData.get(category) || 0);
-            dropdownItemsContainer.appendChild(categoryItem);
-        });
-
-        updateFilterButtonText();
-    }
-
-    // Create a checkbox item for a category
-    function createCategoryCheckbox(category, count) {
-        const item = document.createElement('div');
-        item.className = 'dropdown-item-checkbox';
-        
-        const checkboxId = `filter-${category.replace(/\s+/g, '-')}`;
-        const isChecked = selectedCategories.has(category) ? 'checked' : '';
-        
-        item.innerHTML = `
-            <input type="checkbox" id="${checkboxId}" value="${category}" ${isChecked}>
-            <label for="${checkboxId}">
-                <i class="fas ${getCategoryIcon(category)}"></i>
-                <span>${capitalizeFirst(category)}</span>
-                <span class="category-count">${count}</span>
-            </label>
-        `;
-
-        // Add event listener for checkbox change
-        const checkbox = item.querySelector('input[type="checkbox"]');
-        checkbox.addEventListener('change', function() {
-            handleCategorySelection(category, this.checked);
-        });
-
-        return item;
-    }
-
-    // Get appropriate icon for category
-    function getCategoryIcon(category) {
-        const iconMap = {
-            'lawsuit': 'fa-gavel',
-            'court': 'fa-university',
-            'closure': 'fa-times-circle',
-            'legal': 'fa-balance-scale',
-            'business': 'fa-briefcase',
-            'politics': 'fa-flag',
-            'finance': 'fa-dollar-sign',
-            'technology': 'fa-laptop',
-            'health': 'fa-heartbeat',
-            'education': 'fa-graduation-cap',
-            'default': 'fa-tag'
-        };
-        
-        return iconMap[category.toLowerCase()] || iconMap['default'];
-    }
-
-    // Capitalize first letter
-    function capitalizeFirst(str) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
-    // Handle category selection/deselection
-    function handleCategorySelection(category, isSelected) {
-        if (category === 'all') {
-            if (isSelected) {
-                selectedCategories.clear();
-                selectedCategories.add('all');
-                // Uncheck all other categories
-                const otherCheckboxes = dropdownItemsContainer.querySelectorAll('input[type="checkbox"]:not([value="all"])');
-                otherCheckboxes.forEach(cb => cb.checked = false);
-            }
-        } else {
-            if (isSelected) {
-                selectedCategories.delete('all');
-                selectedCategories.add(category);
-                // Uncheck "Show All"
-                const allCheckbox = dropdownItemsContainer.querySelector('input[value="all"]');
-                if (allCheckbox) allCheckbox.checked = false;
-            } else {
-                selectedCategories.delete(category);
-                // If no categories selected, check "Show All"
-                if (selectedCategories.size === 0) {
-                    selectedCategories.add('all');
-                    const allCheckbox = dropdownItemsContainer.querySelector('input[value="all"]');
-                    if (allCheckbox) allCheckbox.checked = true;
-                }
-            }
-        }
-
-        updateFilterButtonText();
-        updateApplyButtonState();
-    }
-
-    // Select all categories
-    function selectAllCategories() {
-        const checkboxes = dropdownItemsContainer.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = true;
-            selectedCategories.add(checkbox.value);
-        });
-        updateFilterButtonText();
-        updateApplyButtonState();
-    }
-
-    // Clear all categories
-    function clearAllCategories() {
-        const checkboxes = dropdownItemsContainer.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = false;
-        });
-        selectedCategories.clear();
-        selectedCategories.add('all');
-        
-        // Check only "Show All"
-        const allCheckbox = dropdownItemsContainer.querySelector('input[value="all"]');
-        if (allCheckbox) allCheckbox.checked = true;
-        
-        updateFilterButtonText();
-        updateApplyButtonState();
-    }
-
-    // Apply selected filters
-    function applySelectedFilters() {
-        const rows = tableBody.querySelectorAll('tr');
-        let visibleCount = 0;
-
-        rows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            if (cells.length === 0) return;
-
-            let shouldShow = false;
-
-            if (selectedCategories.has('all')) {
-                shouldShow = true;
-            } else {
-                const keyword = cells[1] ? cells[1].textContent.trim().toLowerCase() : '';
-                const section = cells[7] ? cells[7].textContent.trim().toLowerCase() : '';
-
-                // Check if any selected category matches
-                for (const category of selectedCategories) {
-                    if (keyword.includes(category.toLowerCase()) || 
-                        section.includes(category.toLowerCase())) {
-                        shouldShow = true;
-                        break;
-                    }
-                }
-            }
-
-            if (shouldShow) {
-                row.classList.remove('hidden');
-                visibleCount++;
-            } else {
-                row.classList.add('hidden');
-            }
-        });
-
-        // Update status message
-        const selectedCount = selectedCategories.has('all') ? 'all' : selectedCategories.size;
-        const statusMessage = selectedCategories.has('all') 
-            ? `Showing all results (${visibleCount} items)`
-            : `Filtered by ${selectedCount} categories (${visibleCount} items)`;
-        
-        updateStatus(statusMessage);
-        dropdown.classList.remove('active');
-    }
-
-    // Filter category search
-    function filterCategorySearch() {
-        const searchTerm = categorySearch.value.toLowerCase();
-        const categoryItems = dropdownItemsContainer.querySelectorAll('.dropdown-item-checkbox:not(:first-child)');
-
-        categoryItems.forEach(item => {
-            const label = item.querySelector('label span').textContent.toLowerCase();
-            if (label.includes(searchTerm)) {
-                item.classList.remove('hidden');
-            } else {
-                item.classList.add('hidden');
-            }
-        });
-    }
-
-    // Update filter button text
-    function updateFilterButtonText() {
-        let text = 'Categories';
-        
-        if (selectedCategories.has('all')) {
-            text += ' (All)';
-        } else if (selectedCategories.size === 1) {
-            const category = Array.from(selectedCategories)[0];
-            text = `Category (${capitalizeFirst(category)})`;
-        } else if (selectedCategories.size > 1) {
-            text += ` (${selectedCategories.size} selected)`;
-        } else {
-            text += ' (None)';
-        }
-
-        filterButtonText.textContent = text;
-
-        // Add/remove filter indicator
-        let indicator = dropdown.querySelector('.filter-indicator');
-        if (selectedCategories.size > 0 && !selectedCategories.has('all')) {
-            if (!indicator) {
-                indicator = document.createElement('span');
-                indicator.className = 'filter-indicator';
-                dropdown.querySelector('.dropdown-toggle').appendChild(indicator);
-            }
-            indicator.textContent = selectedCategories.size;
-        } else if (indicator) {
-            indicator.remove();
-        }
-    }
-
-    // Update apply button state
-    function updateApplyButtonState() {
-        // Button is always enabled, but could add logic here if needed
-        applyFiltersBtn.disabled = false;
-    }
-
-    // Extract unique categories from new data
-    function extractCategoriesFromData(data) {
-        const categories = new Set();
-        const categoryCounts = new Map();
-
-        data.forEach(item => {
-            const keyword = (item.keywords || item.keyword || '').toString().trim().toLowerCase();
-            const section = (item.section || '').toString().trim().toLowerCase();
-
-            if (keyword) {
-                categories.add(keyword);
-                categoryCounts.set(keyword, (categoryCounts.get(keyword) || 0) + 1);
-            }
-            if (section && section !== keyword) {
-                categories.add(section);
-                categoryCounts.set(section, (categoryCounts.get(section) || 0) + 1);
-            }
-        });
-
-        return { categories, categoryCounts };
-    }
-
-    // Main refresh functionality (updated)
-    async function handleRefresh() {
-        try {
-            setLoadingState(true);
-            showLoadingOverlay(true);
-            
-            const response = await fetch("/refresh-scraper");
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const result = await response.json();
-            
-            // Extract categories from new data
-            const { categories, categoryCounts } = extractCategoriesFromData(result.data || []);
-            allCategories = categories;
-            categoryData = categoryCounts;
-            
-            // Update table with new data
-            updateTable(result.data);
-            
-            // Re-render category dropdown
-            renderCategoryDropdown();
-            
-            // Update status message
-            updateStatus(result.message, "success");
-            
-            // Show success animation
-            showSuccessAnimation();
-            
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            updateStatus("Error fetching data. Please try again.", "error");
-            showErrorAnimation();
-        } finally {
-            setLoadingState(false);
-            showLoadingOverlay(false);
-        }
-    }
-
-    function setLoadingState(isLoading) {
-        if (isLoading) {
-            refreshBtn.disabled = true;
-            refreshBtn.classList.add("btn-loading");
-            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
-        } else {
-            refreshBtn.disabled = false;
-            refreshBtn.classList.remove("btn-loading");
-            refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Fetch New Results';
-        }
-    }
-
-    function showLoadingOverlay(show) {
-        if (show) {
-            loadingOverlay.classList.add("active");
-        } else {
-            loadingOverlay.classList.remove("active");
-        }
-    }
-
-    function updateStatus(message, type = "default") {
-        status.textContent = message;
-        
-        // Remove existing status classes
-        status.classList.remove("loading", "success", "error");
-        
-        // Add new status class
-        if (type !== "default") {
-            status.classList.add(type);
-        }
-
-        // Auto-clear status after 5 seconds for success/error
-        if (type === "success" || type === "error") {
-            setTimeout(() => {
-                status.textContent = "Ready to fetch new results";
-                status.classList.remove("loading", "success", "error");
-            }, 5000);
-        }
-    }
-
-    function updateTable(data) {
-        // Clear existing table body
-        tableBody.innerHTML = "";
-        
-        // Check if data exists and is an array
-        if (!data || !Array.isArray(data)) {
-            const noDataRow = tableBody.insertRow();
-            noDataRow.innerHTML = `
-                <td colspan="8" style="text-align: center; padding: 2rem; color: #666;">
-                    No data available
-                </td>
-            `;
-            return;
-        }
-
-        // Add new rows with animation
-        data.forEach((rowData, index) => {
-            setTimeout(() => {
-                const row = tableBody.insertRow();
-                row.style.opacity = "0";
-                row.style.transform = "translateY(20px)";
-                
-                // Create table cell content
-                // row.innerHTML = `
-                //     <td>${escapeHtml(rowData.site || '')}</td>
-                //     <td>${escapeHtml(rowData.keywords || rowData.keyword || '')}</td>
-                //     <td>${escapeHtml(rowData.title || '')}</td>
-                //     <td>
-                //         ${rowData.url ? 
-                //             `<a href="${escapeHtml(rowData.url)}" target="_blank">View Link</a>` : 
-                //             '<span class="no-link">No URL</span>'
-                //         }
-                //     </td>
-                //     <td>${escapeHtml(rowData.snippet || '')}</td>
-                //     <td>${escapeHtml(rowData.date || '')}</td>
-                //     <td>
-                //         ${rowData.image ? 
-                //             `<img src="${escapeHtml(rowData.image)}" width="80" alt="Article Image" onerror="this.style.display='none'">` : 
-                //             '<span class="no-image">No Image</span>'
-                //         }
-                //     </td>
-                //     <td>${escapeHtml(rowData.section || '')}</td>
-                // `;
-                row.innerHTML = `
-                    <td>${escapeHtml(rowData.site || '')}</td>
-                    <td>${escapeHtml(rowData.keywords || rowData.keyword || '')}</td>
-                    <td>${escapeHtml(rowData.title || '')}</td>
-                    <td>
-                        ${rowData.url ? 
-                            `<a href="${escapeHtml(rowData.url)}" target="_blank">View Link</a>` : 
-                            '<span class="no-link">No URL</span>'
-                        }
-                    </td>
-                    <td>${escapeHtml(rowData.section || '')}</td>
-                    <td>${escapeHtml(rowData.relevance || '')}</td>
-                `;
-
-                // Animate row entrance
-                setTimeout(() => {
-                    row.style.transition = "all 0.5s ease";
-                    row.style.opacity = "1";
-                    row.style.transform = "translateY(0)";
-                }, 50);
-
-            }, index * 100);
-        });
-    }
-
-    // Utility function to escape HTML
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    // Dropdown functionality
-    function toggleDropdown() {
-        dropdown.classList.toggle("active");
-    }
-
-
-    // Animation functions
-    function addEntranceAnimations() {
-        const rows = tableBody.querySelectorAll('tr');
-        rows.forEach((row, index) => {
-            row.style.opacity = '0';
-            row.style.transform = 'translateY(20px)';
-            setTimeout(() => {
-                row.style.transition = 'all 0.5s ease';
-                row.style.opacity = '1';
-                row.style.transform = 'translateY(0)';
-            }, index * 100);
-        });
-    }
-
-    function showSuccessAnimation() {
-        // Add a subtle success animation to the table
-        const tableContainer = document.querySelector('.table-container');
-        tableContainer.style.transform = 'scale(1.02)';
-        setTimeout(() => {
-            tableContainer.style.transition = 'transform 0.3s ease';
-            tableContainer.style.transform = 'scale(1)';
-        }, 200);
-    }
-
-    function showErrorAnimation() {
-        // Add a subtle shake animation for errors
-        const tableContainer = document.querySelector('.table-container');
-        tableContainer.style.animation = 'shake 0.5s ease-in-out';
-        setTimeout(() => {
-            tableContainer.style.animation = '';
-        }, 500);
-    }
-
-    // Scroll to top functionality
-    function createScrollToTopButton() {
-        const scrollBtn = document.createElement('button');
-        scrollBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
-        scrollBtn.className = 'scroll-top';
-        scrollBtn.setAttribute('aria-label', 'Scroll to top');
-        
-        scrollBtn.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-
-        document.body.appendChild(scrollBtn);
-    }
-
-    function handleScroll() {
-        const scrollBtn = document.querySelector('.scroll-top');
-        if (window.pageYOffset > 300) {
-            scrollBtn.classList.add('visible');
-        } else {
-            scrollBtn.classList.remove('visible');
-        }
-    }
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', function(e) {
-        // Ctrl/Cmd + R for refresh (prevent default browser refresh)
-        if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
-            e.preventDefault();
-            if (!refreshBtn.disabled) {
-                handleRefresh();
-            }
-        }
-
-        // Escape to close dropdown
-        if (e.key === 'Escape') {
-            dropdown.classList.remove('active');
-        }
-    });
-
-    // Add CSS for shake animation
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
-        }
-    `;
-    document.head.appendChild(style);
-
-
-    // Error handling improvements
-    window.addEventListener('error', function(e) {
-        console.error('JavaScript Error:', e.error);
-        updateStatus('An unexpected error occurred. Please refresh the page.', 'error');
-    });
-
-    window.addEventListener('unhandledrejection', function(e) {
-        console.error('Unhandled Promise Rejection:', e.reason);
-        updateStatus('Network error occurred. Please check your connection.', 'error');
-    });
-
-    // Network status monitoring
-    window.addEventListener('online', function() {
-        updateStatus('Connection restored', 'success');
-    });
-
-    window.addEventListener('offline', function() {
-        updateStatus('No internet connection', 'error');
-    });
-
-
-    // Initialize tooltips for truncated content
-    function addTooltips() {
-        const cells = document.querySelectorAll('#table-body td');
-        cells.forEach(cell => {
-            if (cell.scrollWidth > cell.clientWidth) {
-                cell.title = cell.textContent.trim();
-            }
-        });
-    }
-
-    // Call addTooltips after table updates
-    const originalUpdateTable = updateTable;
-    updateTable = function(data) {
-        originalUpdateTable(data);
-        setTimeout(addTooltips, 100);
-    };
-
-    console.log('Scraper Dashboard initialized successfully!');
+}
+
+window.onload = function() {
+    loadInitialData();
+};
+
+// Initialize the application
+document.addEventListener('DOMContentLoaded', function() {
+    debugLog('Initializing application...');
+    initializeNavigation();
+    initializeDashboard();
+    initializeScrapResults();
+    initializeLogs();
+    loadInitialData();
 });
+
+// Navigation
+function initializeNavigation() {
+    navButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetSection = this.getAttribute('data-section');
+            debugLog(`Navigation clicked: ${targetSection}`);
+            
+            // Update active nav button
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Show target section
+            contentSections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === targetSection) {
+                    section.classList.add('active');
+                }
+            });
+            
+            // Load section-specific data
+            if (targetSection === 'scrap-results') {
+                loadScrapResults();
+            } else if (targetSection === 'logs') {
+                loadLogs();
+            } else if (targetSection === 'dashboard') {
+                loadPrompts();
+            }
+        });
+    });
+}
+
+// Dashboard Section
+function initializeDashboard() {
+    // Custom prompt character counter
+    const promptTextarea = document.getElementById('custom-prompt');
+    const charCount = document.getElementById('char-count');
+    
+    promptTextarea.addEventListener('input', function() {
+        charCount.textContent = this.value.length;
+    });
+
+    
+    
+    // Prompt management
+    document.getElementById('save-prompt').addEventListener('click', saveCustomPrompt);
+    document.getElementById('clear-prompt').addEventListener('click', clearActivePrompt);
+    
+    // Keywords management
+    document.getElementById('add-keyword').addEventListener('click', addNewKeyword);
+    document.getElementById('save-keywords').addEventListener('click', saveKeywords);
+    document.getElementById('reset-keywords').addEventListener('click', resetKeywords);
+    
+    // Enter key for adding keywords
+    document.getElementById('new-keyword').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            addNewKeyword();
+        }
+    });
+}
+
+// Scrap Results Section
+function initializeScrapResults() {
+    // Refresh scraper button
+    document.getElementById('refresh-scraper').addEventListener('click', refreshScraper);
+    
+    // Filter functionality
+    document.getElementById('relevance-filter').addEventListener('change', filterScrapResults);
+    document.getElementById('site-filter').addEventListener('input', filterScrapResults);
+    document.getElementById('keyword-filter').addEventListener('input', filterScrapResults);
+    document.getElementById('section-filter').addEventListener('input', filterScrapResults);
+    document.getElementById('clear-filters').addEventListener('click', clearScrapFilters);
+}
+
+// Logs Section
+function initializeLogs() {
+    // Logs filter
+    document.getElementById('logs-date-filter').addEventListener('change', filterLogs);
+    document.getElementById('clear-logs-filters').addEventListener('click', clearLogsFilter);
+}
+
+// Load initial data
+async function loadInitialData() {
+    showLoading('Loading initial data...');
+    try {
+        // First, check if backend is reachable
+        await checkBackendHealth();
+        
+        // Then load all data
+        await Promise.all([
+            loadKeywords(),
+            loadPrompts(),
+            loadScrapResults(),
+            loadLogs(),
+        ]);
+        showNotification('Application loaded successfully', 'success');
+    } catch (error) {
+        console.error('Error loading initial data:', error);
+        showNotification('Error loading initial data: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+// Check backend health
+async function checkBackendHealth() {
+    try {
+        const response = await fetch(`${API_BASE}/health`);
+        if (!response.ok) {
+            throw new Error(`Backend not responding: ${response.status}`);
+        }
+        const data = await response.json();
+        debugLog('Backend health check:', data);
+        return data;
+    } catch (error) {
+        debugLog('Backend health check failed:', error);
+        throw new Error(`Cannot connect to backend at ${API_BASE}. Make sure your Flask server is running on port 5000.`);
+    }
+}
+
+// API Functions
+async function apiCall(endpoint, options = {}) {
+    const url = `${API_BASE}${endpoint}`;
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        ...options
+    };
+    
+    if (options.body) {
+        config.body = JSON.stringify(options.body);
+    }
+    
+    debugLog(`API Call: ${url}`, config);
+    
+    try {
+        const response = await fetch(url, config);
+        debugLog(`API Response Status: ${response.status} for ${url}`);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP error! status: ${response.status}, response: ${errorText}`);
+        }
+        
+        const data = await response.json();
+        debugLog(`API Response Data for ${url}:`, data);
+        return data;
+    } catch (error) {
+        console.error(`API call failed for ${url}:`, error);
+        throw error;
+    }
+}
+
+// Dashboard Functions - Keywords
+async function loadKeywords() {
+    try {
+        debugLog('Loading keywords...');
+        const data = await apiCall('/get-keywords');
+        currentKeywords = data.keywords || [];
+        renderKeywords();
+        updateKeywordStats();
+        debugLog('Keywords loaded:', currentKeywords);
+    } catch (error) {
+        console.error('Error loading keywords:', error);
+        showNotification('Error loading keywords: ' + error.message, 'error');
+    }
+}
+
+function renderKeywords() {
+    const container = document.getElementById('keywords-container');
+    container.innerHTML = '';
+    
+    if (currentKeywords.length === 0) {
+        container.innerHTML = '<div class="empty-state">No keywords configured</div>';
+        return;
+    }
+    
+    currentKeywords.forEach((keyword, index) => {
+        const keywordElement = document.createElement('div');
+        keywordElement.className = 'keyword-item';
+        keywordElement.innerHTML = `
+            <span class="keyword-text">${escapeHtml(keyword)}</span>
+            <div class="keyword-actions">
+                <button class="keyword-btn-delete" onclick="deleteKeyword(${index})">X</button>
+            </div>
+        `;
+        container.appendChild(keywordElement);
+    });
+}
+
+function updateKeywordStats() {
+    const countElement = document.getElementById('keyword-count');
+    countElement.textContent = `${currentKeywords.length} keywords`;
+}
+
+function addNewKeyword() {
+    const input = document.getElementById('new-keyword');
+    const keyword = input.value.trim();
+    
+    if (keyword) {
+        if (!currentKeywords.includes(keyword)) {
+            currentKeywords.push(keyword);
+            renderKeywords();
+            updateKeywordStats();
+            input.value = '';
+            showNotification('Keyword added', 'success');
+        } else {
+            showNotification('Keyword already exists', 'error');
+        }
+    } else {
+        showNotification('Please enter a keyword', 'error');
+    }
+}
+
+function editKeyword(index) {
+    const newKeyword = prompt('Edit keyword:', currentKeywords[index]);
+    if (newKeyword && newKeyword.trim()) {
+        currentKeywords[index] = newKeyword.trim();
+        renderKeywords();
+        showNotification('Keyword updated', 'success');
+    }
+}
+
+function deleteKeyword(index) {
+    const deletedKeyword = currentKeywords[index];
+    currentKeywords.splice(index, 1);
+    renderKeywords();
+    updateKeywordStats();
+    showNotification(`Keyword "${deletedKeyword}" deleted`, 'success');
+}
+
+async function saveKeywords() {
+    if (currentKeywords.length === 0) {
+        showNotification('No keywords to save', 'error');
+        return;
+    }
+    
+    showLoading('Saving keywords...');
+    try {
+        const result = await apiCall('/save-keywords', {
+            method: 'POST',
+            body: { keywords: currentKeywords }
+        });
+        showNotification(result.message || 'Keywords saved successfully', 'success');
+    } catch (error) {
+        showNotification('Error saving keywords: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+async function resetKeywords() {
+    if (confirm('Reset to default keywords? This will replace all current keywords.')) {
+        showLoading('Resetting keywords...');
+        try {
+            // Clear current keywords and reload from server (which has defaults)
+            currentKeywords = [];
+            await loadKeywords();
+            showNotification('Keywords reset to defaults', 'success');
+        } catch (error) {
+            showNotification('Error resetting keywords: ' + error.message, 'error');
+        } finally {
+            hideLoading();
+        }
+    }
+}
+
+// Dashboard Functions - Prompts
+async function loadPrompts() {
+    try {
+        debugLog('Loading prompts...');
+        const data = await apiCall('/get-prompts');
+        console.log("dddddddd")
+        console.log(data);
+        promptsData = data.prompts || [];
+        renderPrompts(promptsData);
+        
+        // Check for active prompt
+        const activePrompt = promptsData.find(p => p.is_active);
+        displayActivePromptInEditWindow(activePrompt);
+        updateActivePromptDisplay(activePrompt);
+        
+        debugLog('Prompts loaded:', promptsData);
+    } catch (error) {
+        console.error('Error loading prompts:', error);
+        // showNotification('Error loading prompts: ' + error.message, 'error');
+    }
+}
+
+function renderPrompts(prompts) {
+    const container = document.getElementById('prompts-list');
+    
+    if (prompts.length === 0) {
+        container.innerHTML = '<div class="empty-state">No saved prompts yet</div>';
+        return;
+    }
+    
+    container.innerHTML = prompts.map(prompt => `
+        <div class="prompt-item ${prompt.is_active ? 'active' : ''}">
+            <div class="prompt-content">
+                <div class="prompt-text">${escapeHtml(prompt.prompt)}</div>
+                <div class="prompt-meta">
+                    Created: ${new Date(prompt.created_at).toLocaleString()}
+                    ${prompt.is_active ? ' • <strong>ACTIVE</strong>' : ''}
+                </div>
+            </div>
+            <div class="prompt-actions">
+                ${!prompt.is_active ? `
+                    <button class="btn-activate" onclick="activatePrompt(${prompt.id})">
+                        Activate
+                    </button>
+                ` : ''}
+                <button class="btn-delete" onclick="deletePrompt(${prompt.id})">
+                    Delete
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function displayActivePromptInEditWindow(prompt) {
+    const promptTextarea = document.getElementById('custom-prompt');
+    if (prompt) {
+        // promptTextarea.value = '';
+        promptTextarea.value = prompt.prompt;
+        document.getElementById('char-count').textContent = prompt.prompt.length;
+    }   
+}
+
+function updateActivePromptDisplay(prompt) {
+    const display = document.getElementById('active-prompt-display');
+    const text = document.getElementById('active-prompt-text');
+    const status = document.getElementById('active-prompt-status');
+    
+    if (prompt) {
+        text.textContent = prompt.prompt;
+        display.style.display = 'block';
+        status.textContent = 'Active prompt configured';
+        status.style.color = 'var(--success-color)';
+    } else {
+        display.style.display = 'none';
+        status.textContent = 'No active prompt';
+        status.style.color = 'var(--text-muted)';
+    }
+}
+
+async function saveCustomPrompt() {
+    const promptText = document.getElementById('custom-prompt').value.trim();
+    
+    if (!promptText) {
+        showNotification('Please enter a prompt', 'error');
+        return;
+    }
+    
+    if (promptText.length < 10) {
+        showNotification('Prompt should be at least 10 characters long', 'error');
+        return;
+    }
+    
+    showLoading('Saving custom prompt...');
+    try {
+        const result = await apiCall('/save-prompt', {
+            method: 'POST',
+            body: { prompt: promptText }
+        });
+        
+        // Clear the textarea
+        document.getElementById('custom-prompt').value = '';
+        document.getElementById('char-count').textContent = '0';
+        
+        // Reload prompts to show the new active one
+        await loadPrompts();
+        showNotification(result.message, 'success');
+    } catch (error) {
+        showNotification('Error saving prompt: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+async function activatePrompt(promptId) {
+    showLoading('Activating prompt...');
+    try {
+        // Get the prompt text and save it as active
+        const prompt = promptsData.find(p => p.id === promptId);
+        
+        if (prompt) {
+            await apiCall('/save-prompt', {
+                method: 'POST',
+                body: { prompt: prompt.prompt }
+            });
+            await loadPrompts();
+            showNotification('Prompt activated successfully', 'success');
+        } else {
+            showNotification('Prompt not found', 'error');
+        }
+    } catch (error) {
+        showNotification('Error activating prompt: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+async function deletePrompt(promptId) {
+    if (!confirm('Are you sure you want to delete this prompt?')) {
+        return;
+    }
+    
+    showLoading('Deleting prompt...');
+    try {
+        await apiCall(`/delete-prompt/${promptId}`, {
+            method: 'DELETE'
+        });
+        await loadPrompts();
+        showNotification('Prompt deleted successfully', 'success');
+    } catch (error) {
+        showNotification('Error deleting prompt: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+async function clearActivePrompt() {
+    if (!confirm('Clear the active prompt? This will use the default analysis behavior for future scrapes.')) {
+        return;
+    }
+    
+    showLoading('Clearing active prompt...');
+    try {
+        // To clear active prompt, we need to deactivate all prompts
+        // Since our backend only has activate/save, we'll reload to reflect no active prompt
+        const prompts = await apiCall('/get-prompts');
+        const activePrompt = prompts.prompts.find(p => p.is_active);
+        
+        if (activePrompt) {
+            // Deactivate by updating is_active to false (this would require backend update)
+            // For now, we'll just show a message that user needs to activate another prompt or save new one
+            showNotification('To clear active prompt, save a new prompt or delete the current one', 'info');
+        } else {
+            updateActivePromptDisplay(null);
+            showNotification('No active prompt to clear', 'info');
+        }
+    } catch (error) {
+        showNotification('Error clearing prompt: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+// Scrap Results Functions
+async function loadScrapResults() {
+    const loadingElement = document.getElementById('scrap-loading');
+    const emptyElement = document.getElementById('scrap-empty');
+    const tableBody = document.getElementById('scrap-results-body');
+    
+    loadingElement.style.display = 'block';
+    emptyElement.style.display = 'none';
+    tableBody.innerHTML = '';
+    
+    try {
+        debugLog('Loading scrap results...');
+        const data = await apiCall('/scrap-data');
+        scrapData = data.data || [];
+        debugLog('Scrap results loaded:', scrapData);
+        renderScrapResults(scrapData);
+        updateScrapResultsStats();
+        
+        if (scrapData.length === 0) {
+            emptyElement.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error loading scrap results:', error);
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align: center; color: var(--error-color);">
+                    Error loading scrap results: ${error.message}
+                </td>
+            </tr>
+        `;
+        showNotification('Error loading scrap results: ' + error.message, 'error');
+    } finally {
+        loadingElement.style.display = 'none';
+    }
+}
+
+function renderScrapResults(data) {
+    const tableBody = document.getElementById('scrap-results-body');
+    tableBody.innerHTML = '';
+    
+    if (data.length === 0) {
+        return;
+    }
+    
+    data.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${escapeHtml(item.site || 'N/A')}</td>
+            <td>${escapeHtml(item.keywords || 'N/A')}</td>
+            <td title="${escapeHtml(item.title || '')}">
+                ${truncateText(item.title || 'N/A', 60)}
+            </td>
+            <td>
+                ${item.url ? `
+                    <a href="${item.url}" target="_blank" title="${escapeHtml(item.url)}" style="color: var(--accent-color);">
+                        Link
+                    </a>
+                ` : 'N/A'}
+            </td>
+            <td>${escapeHtml(item.section || 'N/A')}</td>
+            <td>
+                <span class="relevance-badge relevance-${item.relevance || 'Low'}">
+                    ${item.relevance || 'Low'}
+                </span>
+            </td>
+            <td>${escapeHtml(item.date || 'N/A')}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+function updateScrapResultsStats() {
+    const countElement = document.getElementById('results-count');
+    const updatedElement = document.getElementById('last-updated');
+    
+    countElement.textContent = `${scrapData.length} results`;
+    updatedElement.textContent = `Last updated: ${new Date().toLocaleString()}`;
+}
+
+async function refreshScraper() {
+    showLoading('Refreshing scraper... This may take a few minutes.');
+    try {
+        const result = await apiCall('/refresh-scraper');
+        
+        let message = result.message;
+        if (result.prompt_used) {
+            message += ' (Custom prompt was used)';
+        }
+        
+        showNotification(message, 'success');
+        await loadScrapResults(); // Reload the updated data
+    } catch (error) {
+        showNotification('Error refreshing scraper: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+function filterScrapResults() {
+    const relevanceFilter = document.getElementById('relevance-filter').value;
+    const siteFilter = document.getElementById('site-filter').value.toLowerCase();
+    const keywordFilter = document.getElementById('keyword-filter').value.toLowerCase();
+    const sectionFilter = document.getElementById('section-filter').value.toLowerCase();
+    
+    const filteredData = scrapData.filter(item => {
+        const matchesRelevance = !relevanceFilter || item.relevance === relevanceFilter;
+        const matchesSite = !siteFilter || (item.site && item.site.toLowerCase().includes(siteFilter));
+        const matchesKeyword = !keywordFilter || (item.keywords && item.keywords.toLowerCase().includes(keywordFilter));
+        const matchesSection = !sectionFilter || (item.section && item.section.toLowerCase().includes(sectionFilter));
+        
+        return matchesRelevance && matchesSite && matchesKeyword && matchesSection;
+    });
+    
+    renderScrapResults(filteredData);
+}
+
+function clearScrapFilters() {
+    document.getElementById('relevance-filter').value = '';
+    document.getElementById('site-filter').value = '';
+    document.getElementById('keyword-filter').value = '';
+    document.getElementById('section-filter').value = '';
+    renderScrapResults(scrapData);
+}
+
+async function loadLogs() {
+    const loadingElement = document.getElementById('logs-loading');
+    const emptyElement = document.getElementById('logs-empty');
+    const tableBody = document.getElementById('logs-body');
+    
+    loadingElement.style.display = 'block';
+    emptyElement.style.display = 'none';
+    tableBody.innerHTML = '';
+    
+    try {
+        debugLog('Loading logs...');
+        const data = await apiCall('/get-logs');
+        logsData = data.logs || [];
+        debugLog('Logs loaded:', logsData);
+        renderLogs(logsData);
+        
+        if (logsData.length === 0) {
+            emptyElement.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error loading logs:', error);
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; color: var(--error-color);">
+                    Error loading logs: ${error.message}
+                </td>
+            </tr>
+        `;
+        showNotification('Error loading logs: ' + error.message, 'error');
+    } finally {
+        loadingElement.style.display = 'none';
+    }
+}
+
+function renderLogs(data) {
+    const tableBody = document.getElementById('logs-body');
+    tableBody.innerHTML = '';
+    
+    if (data.length === 0) {
+        return;
+    }
+    
+    data.forEach(log => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${formatDateTime(log.scrape_start)}</td>
+            <td>${formatDateTime(log.scrape_end)}</td>
+            <td>${log.duration_seconds || 'N/A'}</td>
+            <td>${log.sites_scraped || 'N/A'}</td>
+            <td>${log.results_collected || 'N/A'}</td>
+            <td>${escapeHtml(log.scrape_modes || 'N/A')}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+
+
+
+
+
+function filterLogs() {
+    const dateFilter = document.getElementById('logs-date-filter').value.trim();
+    const emptyElement = document.getElementById('logs-empty');
+    
+    debugLog('Applying date filter:', dateFilter);
+    
+    if (!dateFilter) {
+        // No filter - show all logs
+        renderLogs(logsData);
+        emptyElement.style.display = logsData.length === 0 ? 'block' : 'none';
+        showNotification(`Showing all ${logsData.length} logs`, 'info');
+        return;
+    }
+    
+    // Validate date format
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateFilter)) {
+        showNotification('Invalid date format. Please use YYYY-MM-DD', 'error');
+        return;
+    }
+    
+    // Filter logs based on date
+    const filteredLogs = logsData.filter(log => {
+        if (!log.scrape_start) return false;
+        
+        // Extract YYYY-MM-DD from the original scrape_start format
+        // Format: "2025-09-29T12:17:22.846799+00:00Z"
+        const logDate = log.scrape_start.split('T')[0];
+        return logDate === dateFilter;
+    });
+    
+    debugLog('Filter results:', {
+        totalLogs: logsData.length,
+        filteredLogs: filteredLogs.length,
+        dateFilter: dateFilter
+    });
+    
+    // Render the filtered results
+    renderLogs(filteredLogs);
+    emptyElement.style.display = filteredLogs.length === 0 ? 'block' : 'none';
+    
+    // Show filter status
+    if (filteredLogs.length === 0) {
+        showNotification(`No logs found for date: ${dateFilter}`, 'info');
+    } else {
+        showNotification(`Showing ${filteredLogs.length} logs for ${dateFilter}`, 'success');
+    }
+}
+
+function clearLogsFilter() {
+    document.getElementById('logs-date-filter').value = '';
+    debugLog('Cleared logs filter');
+    renderLogs(logsData);
+    document.getElementById('logs-empty').style.display = logsData.length === 0 ? 'block' : 'none';
+    showNotification(`Showing all ${logsData.length} logs`, 'info');
+}
+
+// Utility Functions
+function showLoading(message = 'Processing...') {
+    loadingMessage.textContent = message;
+    loadingOverlay.classList.add('active');
+}
+
+function hideLoading() {
+    loadingOverlay.classList.remove('active');
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.className = `notification ${type} show`;
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 5000);
+}
+
+function escapeHtml(unsafe) {
+    if (unsafe === null || unsafe === undefined) return '';
+    return unsafe.toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function truncateText(text, maxLength) {
+    if (!text) return 'N/A';
+    if (text.length <= maxLength) return text;
+    return text.substr(0, maxLength) + '...';
+}
+
+function formatDateTime(inputDate) {
+    if (!inputDate) return 'N/A';
+    
+    try {
+        // Method 1: Try using Date object first (most reliable)
+        const date = new Date(inputDate);
+        if (!isNaN(date.getTime())) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            
+            return `${year}-${month}-${day} - ${hours}:${minutes}:${seconds}`;
+        }
+        
+        // Method 2: String manipulation for specific format
+        // Handle format: 2025-09-29T11:53:47.684588+00:00Z
+        let cleaned = inputDate;
+        
+        // Remove Z if present
+        if (cleaned.endsWith('Z')) {
+            cleaned = cleaned.slice(0, -1);
+        }
+        
+        // Remove timezone offset (anything after + or -)
+        const timezoneIndex = Math.max(cleaned.lastIndexOf('+'), cleaned.lastIndexOf('-'));
+        if (timezoneIndex > 10) { // Ensure it's not part of the date
+            cleaned = cleaned.substring(0, timezoneIndex);
+        }
+        
+        // Remove milliseconds (anything after .)
+        const dotIndex = cleaned.indexOf('.');
+        if (dotIndex > 0) {
+            cleaned = cleaned.substring(0, dotIndex);
+        }
+        
+        // Replace T with ' - '
+        if (cleaned.includes('T')) {
+            return cleaned.replace('T', ' - ');
+        }
+        
+        return cleaned; // Return as is if no T found
+        
+    } catch (error) {
+        console.error('Error formatting date:', error, 'Input:', inputDate);
+        return 'Invalid Date';
+    }
+}
+
+// Make functions available globally for onclick handlers
+window.editKeyword = editKeyword;
+window.deleteKeyword = deleteKeyword;
+window.activatePrompt = activatePrompt;
+window.deletePrompt = deletePrompt;

@@ -133,5 +133,16 @@
       "home_fetch",
       "crawl"
     ]
+  },
+  {
+    "scrape_start": "2025-09-29T17:12:56.017661+00:00Z",
+    "scrape_end": "2025-09-29T17:19:45.777951+00:00Z",
+    "duration_seconds": 409.76,
+    "sites_scraped": 53,
+    "results_collected": 59,
+    "scrape_modes": [
+      "home_fetch",
+      "crawl"
+    ]
   }
 ]

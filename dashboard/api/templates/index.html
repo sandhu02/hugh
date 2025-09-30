@@ -1,126 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scraper Dashboard</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Financial News Analyzer</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="#" class="navbar-brand">
-                <i class="fas fa-spider"></i>
-                Scraper Dashboard
-            </a>
-            
-            <div class="navbar-nav">
-                <div class="dropdown">
-                    <button class="dropdown-toggle" id="dropdownToggle">
-                        <i class="fas fa-filter"></i>
-                        <span id="filterButtonText">Categories (All)</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="dropdown-menu" id="categoryDropdown">
-                        <div class="dropdown-header">
-                            <div class="dropdown-actions">
-                                <button class="btn-select-all" id="selectAllBtn">Select All</button>
-                                <button class="btn-clear-all" id="clearAllBtn">Clear All</button>
-                            </div>
-                        </div>
-                        <div class="dropdown-search">
-                            <input type="text" id="categorySearch" placeholder="Search categories..." class="category-search-input">
-                            <i class="fas fa-search"></i>
-                        </div>
-                        <div class="dropdown-items-container" id="dropdownItemsContainer">
-                            <!-- Dynamic categories will be added here -->
-                            <div class="dropdown-item-checkbox">
-                                <input type="checkbox" id="filter-all" value="all" checked>
-                                <label for="filter-all">
-                                    <i class="fas fa-list"></i>
-                                    <span>Show All</span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="dropdown-footer">
-                            <button class="btn-apply-filters" id="applyFiltersBtn">Apply Filters</button>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>💰 FinAnalyzer</h2>
+            </div>
+            <nav class="nav">
+                <button class="nav-btn active" data-section="dashboard">
+                    📊 Admin
+                </button>
+                <button class="nav-btn" data-section="scrap-results">
+                    📈 Scrape Results
+                </button>
+                <button class="nav-btn" data-section="logs">
+                    📋 Logs
+                </button>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard Section -->
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h1>Analysis Dashboard</h1>
+                    <p>Custom prompts and keyword management</p>
+                </div>
+
+                <!-- Custom Prompt Card -->
+                <div class="card">
+                    <div class="prompt-header">
+                        <h3>Custom Analysis Prompt</h3>
+                        <div class="prompt-status">
+                            <span id="active-prompt-status">Active prompt</span>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="custom-prompt">Enter your custom analysis instructions that will be used for GPT
+                            classification:</label>
+                        <textarea id="custom-prompt" rows="10">
+
+            </textarea>
+                        <div class="char-counter">
+                            <span id="char-count">0</span> characters
+                        </div>
+                    </div>
+                    <button id="save-prompt" class="btn-primary">
+                        💾 Save as Active Prompt
+                    </button>
+
+                    <!-- Active Prompt Display -->
+                    <!-- <div id="active-prompt-display" class="active-prompt" style="display: none;">
+                        <h4>Active Prompt:</h4>
+                        <div id="active-prompt-text" class="prompt-text"></div>
+                        <button id="clear-prompt" class="btn-secondary">
+                            🗑️ Clear Active Prompt
+                        </button>
+                    </div> -->
                 </div>
-            </div>
 
-            <div class="navbar-buttons">
-                <button class="btn btn-primary" id="refreshBtn">
-                    <i class="fas fa-sync-alt"></i>
-                    Scrap Again
-                </button>
-                <a href="/logs-page-render" class="btn btn-secondary" id="get-logs-btn">
-                    <i class="fas fa-file-alt"></i>
-                    View Logs
-                </a>
-            </div>
+                <!-- Saved Prompts Card -->
+                <div class="card">
+                    <h3>Saved Prompts</h3>
+                    <div id="prompts-list" class="prompts-container">
+                        <!-- Prompts will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Keywords Management Card -->
+                <div class="card">
+                    <div class="keywords-header">
+                        <h3>Keywords Management</h3>
+                        <div class="keyword-stats">
+                            <span id="keyword-count">0 keywords</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="new-keyword"
+                            placeholder="Add new keyword (e.g., bankruptcy, financial distress)...">
+                        <button id="add-keyword" class="btn-secondary">
+                            Add Keyword
+                        </button>
+                    </div>
+
+                    <div class="keywords-list">
+                        <div id="keywords-container" class="keywords-grid"></div>
+                    </div>
+
+                    <div class="keywords-actions">
+                        <button id="save-keywords" class="btn-primary">
+                            💾 Save All Keywords
+                        </button>
+                        <button id="reset-keywords" class="btn-secondary">
+                            🔄 Reset to Default
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scrap Results Section -->
+            <section id="scrap-results" class="content-section">
+                <div class="section-header">
+                    <div class="header-main">
+                        <h1>Scrap Results</h1>
+                        <div class="results-stats">
+                            <span id="results-count">0 results</span>
+                            <span id="last-updated">Last updated: Never</span>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <button id="refresh-scraper" class="btn-primary">
+                            🔄 Refresh Scraper
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-card card">
+                    <h4>Filters</h4>
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>Relevance:</label>
+                            <select id="relevance-filter">
+                                <option value="">All Relevance</option>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Site:</label>
+                            <input type="text" id="site-filter" placeholder="Filter by site...">
+                        </div>
+                        <div class="filter-group">
+                            <label>Keyword:</label>
+                            <input type="text" id="keyword-filter" placeholder="Filter by keyword...">
+                        </div>
+                        <div class="filter-group">
+                            <label>Section:</label>
+                            <input type="text" id="section-filter" placeholder="Filter by section...">
+                        </div>
+                        <button id="clear-filters" class="btn-secondary">
+                            Clear Filters
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Table -->
+                <div class="card">
+                    <div class="table-container">
+                        <table id="scrap-results-table">
+                            <thead>
+                                <tr>
+                                    <th>Site</th>
+                                    <th>Keywords</th>
+                                    <th>Title</th>
+                                    <th>&nbspURL&nbsp&nbsp</th>
+                                    <th>Section</th>
+                                    <th>Relevance</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scrap-results-body">
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="scrap-loading" class="loading">Loading scrap results...</div>
+                    <div id="scrap-empty" class="empty-state" style="display: none;">
+                        <p>No scrap results found. Click "Refresh Scraper" to start scraping.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Logs Section -->
+            <section id="logs" class="content-section">
+                <div class="section-header">
+                    <h1>Scraping Logs</h1>
+                    <p>Monitor scraping activities and performance</p>
+                </div>
+
+                <!-- Logs Filters -->
+                <div class="filters-card card">
+                    <h4>Filters</h4>
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>Date:</label>
+                            <input type="date" id="logs-date-filter">
+                        </div>
+                        <button id="clear-logs-filters" class="btn-secondary">
+                            Clear Filter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Logs Table -->
+                <div class="card">
+                    <div class="table-container">
+                        <table id="logs-table">
+                            <thead>
+                                <tr>
+                                    <th>Scrape Start</th>
+                                    <th>Scrape End</th>
+                                    <th>Duration (s)</th>
+                                    <th>Sites Scraped</th>
+                                    <th>Results Collected</th>
+                                    <th>Scrape Modes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logs-body">
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="logs-loading" class="loading">Loading logs...</div>
+                    <div id="logs-empty" class="empty-state" style="display: none;">
+                        <p>No logs found for the selected date.</p>
+                    </div>
+                </div>
+            </section>
         </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="container">
-        <h2 class="heading">
-            <i class="fas fa-table"></i>
-            Scraped Results
-        </h2>
-
-        <div class="table-container">
-            <table id="resultsTable" cellpadding="8">
-                <thead id="table-head">
-                    <tr>
-                        <th><i class="fas fa-globe"></i> Site</th>
-                        <th><i class="fas fa-search"></i> Keyword</th>
-                        <th><i class="fas fa-heading"></i> Title</th>
-                        <th><i class="fas fa-link"></i> URL</th>
-                        <!-- <th><i class="fas fa-quote-left"></i> Snippet</th>
-                        <th><i class="fas fa-calendar"></i> Date</th>
-                        <th><i class="fas fa-image"></i> Image</th> -->
-                        <th><i class="fas fa-tag"></i> Section</th>
-                        <th><i class="fas fa-tag"></i> Relevence</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    {% for row in data %}
-                    <tr>
-                        <td>{{ row.site }}</td>
-                        <td>{{ row.keyword }}</td>
-                        <td>{{ row.title }}</td>
-                        <td><a href="{{ row.url }}" target="_blank">View Link</a></td>
-                        <!-- <td>{{ row.snippet }}</td>
-                        <td>{{ row.date }}</td>
-                        <td>
-                            {% if row.image %}
-                                <img src="{{ row.image }}" width="80" alt="Article Image">
-                            {% else %}
-                                <span class="no-image">No Image</span>
-                            {% endif %} -->
-                        </td>
-                        <td>{{ row.section }}</td>
-                        <td>{{ row.relevance }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        <p id="status">Ready to fetch new results</p>
     </div>
 
     <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <p>Fetching new results...</p>
-        </div>
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p id="loading-message">Processing...</p>
     </div>
+
+    <!-- Notification System -->
+    <div id="notification" class="notification"></div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
+
 </html>
