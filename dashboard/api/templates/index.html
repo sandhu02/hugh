@@ -31,7 +31,6 @@
         <!-- Main Content -->
         <div class="main-content">
             <!-- Dashboard Section -->
-            <!-- Dashboard Section -->
             <section id="dashboard" class="content-section active">
                 <div class="section-header">
                     <h1>Analysis Dashboard</h1>
@@ -113,7 +112,7 @@
             <section id="scrap-results" class="content-section">
                 <div class="section-header">
                     <div class="header-main">
-                        <h1>Scrap Results</h1>
+                        <h1>Scrape Results</h1>
                         <div class="results-stats">
                             <span id="results-count">0 results</span>
                             <span id="last-updated">Last updated: Never</span>
@@ -182,6 +181,30 @@
                         <p>No scrap results found. Click "Refresh Scraper" to start scraping.</p>
                     </div>
                 </div>
+
+                <!-- Failed Results Table -->
+                <div class="card">
+                    <h3>⚠️ Failed Results</h3>
+                    <div class="table-container">
+                        <table id="failed-results-table">
+                            <thead>
+                                <tr>
+                                    <th>Site</th>
+                                    <th>Mode</th>
+                                    <th>Error</th>
+                                </tr>
+                            </thead>
+                            <tbody id="failed-results-body">
+                                <!-- Failed data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="failed-loading" class="loading">Loading failed results...</div>
+                    <div id="failed-empty" class="empty-state" style="display: none;">
+                        <p>No failed results found.</p>
+                    </div>
+                </div>
+
             </section>
 
             <!-- Logs Section -->
@@ -216,6 +239,7 @@
                                     <th>Duration (s)</th>
                                     <th>Sites Scraped</th>
                                     <th>Results Collected</th>
+                                    <th>Failed Results</th>
                                     <th>Scrape Modes</th>
                                 </tr>
                             </thead>

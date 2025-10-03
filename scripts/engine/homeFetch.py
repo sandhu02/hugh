@@ -28,6 +28,7 @@ def home_fetch(site_config , keywords):
         response.raise_for_status()
     except requests.RequestException as e:
         print(f"[ERROR] Request failed for {base_url}: {e}")
+        raise RuntimeError(f"Request failed for {base_url}: {e}")
 
     results = htmlParser(response.text , base_url, selectors, keywords)
 

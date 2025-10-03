@@ -64,7 +64,7 @@ smh:
     page_start: 1
     page_stop: 10  
   selectors:
-    item: "div[data-testid='story-tile']"        # container for article
+    item: "div[data-testid='story-tile']"        
     title: "h3[data-testid='article-headline']"
     url: "h3[data-testid='article-headline'] a::attr(href)"
     snippet: "p[data-pb-type='ab']"
@@ -84,7 +84,7 @@ theage:
     page_start: 1
     page_stop: 10
   selectors:
-    item: "div[data-testid='story-tile']"                # The main card container
+    item: "div[data-testid='story-tile']"                
     title: "h3[data-testid='article-headline'] a"        # Headline link
     url: "h3[data-testid='article-headline'] a::attr(href)"  # Article URL
     snippet: "p[data-pb-type='ab']"                     # Short article abstract/summary
@@ -717,7 +717,6 @@ NBR (National Business Review):
     snippet: "p.text-description"
     image: "div.frame .bg-holder::attr(style)"
     category: "a.text-category"
-    comments: "a[href*='#comments'] span.size-7"
   
 
 BusinessDesk NZ:
@@ -809,7 +808,7 @@ Australian Mining:
   
 
 Mining Weekly: 
-  modes: [home_fetch]
+  modes: [crawl]
   urls:
     - https://www.miningweekly.com/
   selectors:
@@ -837,50 +836,366 @@ Energy News Bulletin:
     category: "h5.category a"
     author: ""
   
+# old data
+Oil & Gas Australia: 
+  modes: [home_fetch]
+  urls:
+    - https://www.oilandgasaustralia.com.au/
+  selectors:
+    item: "div.mg-posts-sec-post"
+    title: "h4.title a"
+    url: "h4.title a::attr(href)"
+    snippet: "div.mg-content p"
+    date: "div.mg-blog-meta span.mg-blog-date a"
+    image: "div.mg-blog-thumb::attr(style)"  
+    section: "div.mg-blog-category a.newses-categories"
+    author: "" 
+  
 
-# Oil & Gas Australia: 
-#   modes: [home_fetch]
-#   urls:
-#     - https://www.oilandgasaustralia.com.au/
+RenewEconomy: 
+  modes: [home_fetch]
+  urls:
+    - https://reneweconomy.com.au/
+  selectors:
+    item: "div.post"
+    title: "h2.wp-block-post-title a"
+    url: "h2.wp-block-post-title a::attr(href)"
+    image: "figure.wp-block-post-featured-image img::attr(src)"
+    category: "div.post-primary-category a"
+    author: "div.wp-block-post-author-name a"
+    date: "div.wp-block-post-date time"
+    comments: "div.post-comment-count a.comment-link"
+  
 
-# RenewEconomy: 
-#   modes: [home_fetch]
-#   urls:
-#     - https://reneweconomy.com.au/
+Utility Magazine: 
+  modes: [home_fetch]
+  urls:
+    - https://utilitymagazine.com.au/
+  selectors:
+    item: "article.jeg_post"
+    title: "h3.jeg_post_title a"
+    url: "h3.jeg_post_title a::attr(href)"
+    image: "div.jeg_thumb img::attr(src)"
+    category: "div.jeg_post_category a"
+    date: "div.jeg_meta_date a"
+  
 
-# Utility Magazine: 
-#   modes: [home_fetch]
-#   urls:
-#     - https://utilitymagazine.com.au/
+PV Magazine Australia: 
+  modes: [home_fetch]
+  urls:
+    - https://www.pv-magazine-australia.com/
+  selectors:
+    item: "div.article-preview"
+    title: "h3.entry-title a"
+    url: "h3.entry-title a::attr(href)"
+    author: "span.entry-author a"
+    date: "time.entry-published"
+    comments: "a.comments-link::attr(href)"
+    summary: "div.article-lead-text p"
+  
 
-# PV Magazine Australia: 
-#   modes: [home_fetch]
-#   urls:
-#     - https://www.pv-magazine-australia.com/
+Beef Central: 
+  modes: [home_fetch]
+  urls:
+    - https://www.beefcentral.com/
+  selectors:
+    item: "div.col-md-3"
+    title: "h4 a"
+    url: "h4 a::attr(href)"
+    image: "a img::attr(src)"
+    summary: "p"
+    author_date: "small"
+  
 
-# Beef Central: 
-#   modes: [home_fetch]
-#   urls:
-#     - https://www.beefcentral.com/
+Grain Central: 
+  modes: [home_fetch]
+  urls:
+    - https://www.graincentral.com/ 
+  selectors:
+    item: "div.col-md-3"
+    title: "h4 a"
+    url: "h4 a::attr(href)"
+    image: "a img::attr(src)"
+    description: "p"
+    meta: "small"
+        
 
-# Grain Central: 
-#   modes: [home_fetch]
-#   urls:
-#     - https://www.graincentral.com/
+Sheep Central: 
+  modes: [home_fetch]
+  urls:
+    - https://www.sheepcentral.com/
+  selectors:
+    item: "div.col-md-3"
+    title: "h4 a"
+    url: "h4 a::attr(href)"
+    image: "a img::attr(src)"
+    description: "p"
+    date: "small"
+  
 
-# Sheep Central: 
-#   modes: [home_fetch]
-#   urls:
-#     - https://www.sheepcentral.com/
+#TODO: special
+Food & Drink Business: 
+  modes: [home_fetch]
+  urls:
+    - https://www.foodanddrinkbusiness.com.au/   
+  selectors:
+    item: "div.landing-card"
+    title: ".landing-card-title h3 a"
+    url: ".landing-card-title h3 a::attr(href)"
+    date: ".landing-card-footer span.text-hint"
+    image: ".landing-card-inner img::attr(src), .landing-card-img img::attr(src)"
+    description: ".landing-card-inner p:not(:has(img))"
+   
 
-# Food & Drink Business: 
-#   modes: [home_fetch]
-#   urls:
-#     - https://www.foodanddrinkbusiness.com.au/    
-
-# Inside Retail: 
-#   modes: [home_fetch]
-#   urls:
-#     - https://insideretail.com.au/    
-
+Inside Retail: 
+  modes: [home_fetch]
+  urls:
+    - https://insideretail.com.au/    
+  selectors:
+    item: "div.post__item"
+    category: "a.post__category"
+    title: "h3 a"
+    url: "h3 a::attr(href)"
+    author: "a.post__author"
+  
 #60
+
+RetailBiz:
+  modes: [home_fetch]
+  urls:  
+    - https://www.retailbiz.com.au/
+  selectors:
+    item: "div.post-card"
+    category: "a.post-category"
+    title: "h3 a"
+    url: "h3 a::attr(href)"
+    image: "div.post-thumbnail img::attr(src)"
+    description: "div.post-excerpt p"
+    author: "div.post-meta span.post-author"
+    date: "div.post-meta span.post-date"
+  
+
+Hospitality Magazine:
+  modes: [home_fetch]
+  urls:  
+    - https://www.hospitalitymagazine.com.au/
+  selectors:
+    item: "article.post-item"
+    category: "ul.mnmd-post-categories li a.post-category"
+    title: "h3.post-title a"
+    url: "h3.post-title a::attr(href)"
+    image: "div.post-image img::attr(src)"
+    description: "div.post-excerpt"
+    author: "div.post-meta.post-footer span.post-author a"
+    date: "div.post-meta.post-footer time.published"
+    
+
+QSR Media:
+  modes: [home_fetch]
+  urls:  
+    - https://qsrmedia.com.au/
+  selectors:
+    item: "div.item"
+    title: "a.item__title"
+    url: "a.item__title::attr(href)"
+    image: "div.content-left img::attr(src)"
+    description: "div.item__description"
+    category: "div.if-dc a"
+  
+
+The Urban Developer:
+  modes: [home_fetch]
+  urls:  
+    - https://www.theurbandeveloper.com/
+  selectors:
+    item: "div.news-section-news-item__inner"
+    image: "picture.article-content-image img::attr(src)"
+    category: "div.news-section-news-item__category"
+    title: "h2.news-section-news-item__title"
+    author: "div.news-section-news-item__author"
+    date: "div.news-section-news-item__readTime"
+  
+Australian Property Journal:
+  modes: [home_fetch]
+  urls: 
+    - https://greenstreetnews.com/uk/
+  selectors:  
+    item: "li.wp-block-post"
+    title: "h2.wp-block-post-title a"
+    url: "h2.wp-block-post-title a::attr(href)"
+    snippet: "div.wp-block-post-excerpt p"
+    date: "time::attr(datetime)"
+    image: "figure.wp-block-post-featured-image img::attr(src)"
+    section: "p.post-card__primary-term"
+    author: "li.wp-block-post::attr(class)"
+  
+
+Sourceable:
+  modes: [home_fetch]
+  urls: 
+    - https://sourceable.net/
+  selectors:  
+    item: ".col-md-4.col-big"
+    title: "div.feature-img h3.newsHeadign"
+    url: "div.feature-img a::attr(href)"
+    snippet: "div.feature-img p"
+    date: "div.category-date .pull-right"
+    image: "div.feature-img img::attr(src)"
+    section: "div.category-date .category-name"
+    author: "div.mask-footer .pull-left a"
+  
+
+Architecture & Design:
+  modes: [home_fetch]
+  urls: 
+    - https://www.architectureanddesign.com.au/editorials/industry-news
+    - https://www.architectureanddesign.com.au/editorials/product-news
+  selectors:  
+    item: div.custom-col
+    title: h3.primaryCard_cardTitle__9kPkD a
+    url: h3.primaryCard_cardTitle__9kPkD a::attr(href)
+    snippet: p.primaryCard_para__yEIYp
+    image: div.primaryCard_imageBlock__K71Db img::attr(src)
+    date: ""
+    author: ""
+    section: ""
+
+  
+
+Transport & Logistics News:
+  modes: [home_fetch]
+  urls: 
+    - https://tandlnews.com.au/news/
+  selectors:  
+    item: "li.wp-block-post"
+    title: "h4.wp-block-post-title a"
+    url: "h4.wp-block-post-title a::attr(href)"
+    snippet: "div.wp-block-post-excerpt p.wp-block-post-excerpt__excerpt"
+    date: ""
+    image: "figure.wp-block-post-featured-image img::attr(src)"
+    section: "li.wp-block-post::attr(class)"
+    author: ""
+  
+
+Lloyd's List Australia:
+  modes: [crawl]
+  urls: 
+    - https://lloydslist.maritimeintelligence.informa.com/
+  selectors:  
+    item: "div.flex_col"
+    title: "h3.article-preview__headline a"
+    url: "h3.article-preview__headline a::attr(href)"
+    snippet: ""
+    date: "time.article-metadata__date"
+    image: "img.article-preview__image::attr(src)"
+    section: "div.article-metadata h6"
+    author: ""
+  
+
+Australian Aviation:
+  modes: [crawl]
+  urls: 
+    - https://australianaviation.com.au/
+  selectors:  
+    item: "div.w-unset-container"
+    title: "h3.magcat-title a"
+    url: "h3.magcat-title a::attr(href)"
+    image: "a.article-item img::attr(src)"
+    author: "span.author-italic a"
+    date: "div.grid-post-box-meta span:nth-of-type(2)"
+  
+
+Infrastructure Magazine:
+  modes: [home_fetch]
+  urls: 
+    - https://infrastructuremagazine.com.au/
+  selectors:  
+    item: "article.jeg_post"
+    title: "h3.jeg_post_title a"
+    url: "h3.jeg_post_title a::attr(href)"
+    snippet: ""
+    date: "div.jeg_meta_date a"
+    image: "div.thumbnail-container img::attr(src)"
+    section: "div.jeg_post_category a"
+    author: ""
+  
+
+Australian Ageing Agenda:
+  modes: [home_fetch]
+  urls: 
+    - https://www.australianageingagenda.com.au/
+  selectors:  
+    item: ".spotlight-post"
+    title: "h3.article-title a"
+    url: "h3.article-title a::attr(href)"
+    snippet: ""
+    date: "span.posts-date a"
+    image: "figure.categorised-article img::attr(src)"
+    section: ""
+    author: "span.posts-author a"
+
+  
+
+Aged Care Insite:
+  modes: [home_fetch]
+  urls: 
+    - https://www.agedcareinsite.com.au/category/industrynews/
+  selectors:
+    item: "li.post-item"
+    title: "h2.post-title a"
+    url: "h2.post-title a::attr(href)"
+    snippet: "p.post-excerpt"
+    date: "div.day-month span"
+    image: "a.post-thumb img::attr(src)"
+    section: ""   
+    author: "a.author-name"
+  
+# This site can’t be reached
+# Australian Health Journal:
+#   modes: [home_fetch]
+#   urls: 
+#     - https://www.theaustralianhealthjournal.com.au/
+
+PharmaDispatch:
+  modes: [home_fetch]
+  urls: 
+    - https://pharmadispatch.com/
+  selectors:
+    item: "li.has-thumbnail"
+    title: "a.post-title"
+    url: "a.post-title::attr(href)"
+    snippet: "div.excerpt"
+    date: "span.post-date"
+    image: "a.thumbnail::attr(style)"   
+    section: "a.category-label"
+    author: ""   
+  
+
+ARITA News:
+  modes: [home_fetch]
+  urls: 
+    - https://arita.com.au/ARITA/ARITA/About_Us/News.aspx
+  selectors:
+    item: "table tbody tr"
+    title: "a"
+    url: "a::attr(href)"
+    snippet: ""  
+    date: "span span"  
+    image: ""   
+    section: "" 
+    author: "" 
+  
+
+ASIC Notices:
+  modes: [home_fetch]
+  urls: 
+    - https://publishednotices.asic.gov.au/browsesearch-notices/  
+  selectors:
+    item: "tr td div.article-block"
+    title: "div.title-block h3"
+    url: "div.notice-buttons a::attr(href)"
+    snippet: "p"   
+    date: "div.published-date"
+    image: ""   
+    section: "" 
+    author: ""  

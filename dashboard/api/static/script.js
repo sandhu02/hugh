@@ -5,6 +5,8 @@ let currentKeywords = [];
 let scrapData = [];
 let logsData = [];
 let promptsData = [];
+let failedScrapeResults = [];
+
 
 // DOM Elements
 const navButtons = document.querySelectorAll('.nav-btn');
@@ -137,6 +139,7 @@ async function loadInitialData() {
             loadPrompts(),
             loadScrapResults(),
             loadLogs(),
+            loadFailedResults()
         ]);
         showNotification('Application loaded successfully', 'success');
     } catch (error) {
@@ -550,6 +553,44 @@ async function loadScrapResults() {
     }
 }
 
+//Failed Results Function
+async function loadFailedResults() {
+    const loadingElement = document.getElementById('failed-loading');
+    const emptyElement = document.getElementById('failed-empty');
+    const tableBody = document.getElementById('failed-results-body');
+    
+    if (!loadingElement || !emptyElement || !tableBody) return;
+    
+    loadingElement.style.display = 'block';
+    emptyElement.style.display = 'none';
+    tableBody.innerHTML = '';
+    
+    try {
+        debugLog('Loading failed results...');
+        const data = await apiCall('/failed-results'); // <-- endpoint on backend
+        failedData = data.data || [];
+        debugLog('Failed results loaded:', failedData);
+        renderFailedResults(failedData);
+        
+        if (failedData.length === 0) {
+            emptyElement.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error loading failed results:', error);
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="2" style="text-align: center; color: var(--error-color);">
+                    Error loading failed results: ${error.message}
+                </td>
+            </tr>
+        `;
+        showNotification('Error loading failed results: ' + error.message, 'error');
+    } finally {
+        loadingElement.style.display = 'none';
+    }
+}
+
+
 function renderScrapResults(data) {
     const tableBody = document.getElementById('scrap-results-body');
     if (!tableBody) return;
@@ -587,6 +628,28 @@ function renderScrapResults(data) {
     });
 }
 
+function renderFailedResults(data) {
+    const tableBody = document.getElementById('failed-results-body');
+    if (!tableBody) return;
+    
+    tableBody.innerHTML = '';
+    
+    if (data.length === 0) return;
+    
+    data.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${escapeHtml(item.site || 'N/A')}</td>
+            <td>${escapeHtml(item.mode || 'Unknown')}</td>
+            <td title="${escapeHtml(item.error_message || '')}">
+                ${truncateText(item.error_message || 'Unknown error', 80)}
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+
 function updateScrapResultsStats() {
     const countElement = document.getElementById('results-count');
     const updatedElement = document.getElementById('last-updated');
@@ -611,6 +674,7 @@ async function refreshScraper() {
         
         showNotification(message, 'success');
         await loadScrapResults(); // Reload the updated data
+        await loadFailedResults(); // Failed Results
     } catch (error) {
         showNotification('Error refreshing scraper: ' + error.message, 'error');
     } finally {
@@ -711,6 +775,7 @@ function renderLogs(data) {
             <td>${log.duration_seconds || 'N/A'}</td>
             <td>${log.sites_scraped || 'N/A'}</td>
             <td>${log.results_collected || 'N/A'}</td>
+            <td>${log.failed_results || 'N/A'}</td>
             <td>${escapeHtml(log.scrape_modes || 'N/A')}</td>
         `;
         tableBody.appendChild(row);

@@ -155,5 +155,149 @@
       "home_fetch",
       "crawl"
     ]
+  },
+  {
+    "scrape_start": "2025-10-02T07:12:29.750096+00:00Z",
+    "scrape_end": "2025-10-02T07:15:28.081590+00:00Z",
+    "duration_seconds": 178.33,
+    "sites_scraped": 53,
+    "results_collected": 84,
+    "failed_results": 0,
+    "scrape_modes": [
+      "home_fetch",
+      "crawl"
+    ]
+  },
+  {
+    "scrape_start": "2025-10-03T13:39:21.089185+00:00Z",
+    "scrape_end": "2025-10-03T13:43:51.230847+00:00Z",
+    "duration_seconds": 270.14,
+    "sites_scraped": 79,
+    "results_collected": 83,
+    "failed_results": 18,
+    "scrape_modes": [
+      "home_fetch",
+      "crawl"
+    ]
+  },
+  {
+    "scrape_start": "2025-10-03T14:33:10.104290+00:00Z",
+    "scrape_end": "2025-10-03T14:37:15.681306+00:00Z",
+    "duration_seconds": 245.58,
+    "sites_scraped": 79,
+    "results_collected": 94,
+    "failed_results": 14,
+    "scrape_modes": [
+      "home_fetch",
+      "crawl"
+    ]
+  },
+  {
+    "scrape_start": "2025-10-03T14:53:33.495821+00:00Z",
+    "scrape_end": "2025-10-03T14:56:40.287441+00:00Z",
+    "duration_seconds": 186.79,
+    "sites_scraped": 73,
+    "results_collected": 3321,
+    "failed_results": 0,
+    "scrape_modes": [
+      "home_fetch",
+      "crawl"
+    ]
+  },
+  {
+    "scrape_start": "2025-10-03T15:04:10.298970+00:00Z",
+    "scrape_end": "2025-10-03T15:08:32.045650+00:00Z",
+    "duration_seconds": 261.75,
+    "sites_scraped": 73,
+    "results_collected": 3308,
+    "failed_results": 2,
+    "scrape_modes": [
+      "home_fetch",
+      "crawl"
+    ]
+  },
+  {
+    "scrape_start": "2025-10-03T19:05:55.254600+00:00Z",
+    "scrape_end": "2025-10-03T19:09:46.377805+00:00Z",
+    "duration_seconds": 231.12,
+    "sites_scraped": 73,
+    "results_collected": 88,
+    "failed_results": 8,
+    "scrape_modes": [
+      "home_fetch",
+      "crawl"
+    ]
+  },
+  {
+    "scrape_start": "2025-10-03T19:26:42.403020+00:00Z",
+    "scrape_end": "2025-10-03T19:31:38.735607+00:00Z",
+    "duration_seconds": 296.33,
+    "sites_scraped": 73,
+    "results_collected": 78,
+    "failed_results": 11,
+    "scrape_modes": [
+      "home_fetch",
+      "crawl"
+    ]
+  },
+  {
+    "scrape_start": "2025-10-03T19:45:07.129468+00:00Z",
+    "scrape_end": "2025-10-03T19:49:56.104699+00:00Z",
+    "duration_seconds": 288.98,
+    "sites_scraped": 73,
+    "results_collected": 88,
+    "failed_results": 9,
+    "scrape_modes": [
+      "home_fetch",
+      "crawl"
+    ]
+  },
+  {
+    "scrape_start": "2025-10-03T20:06:54.318929+00:00Z",
+    "scrape_end": "2025-10-03T20:07:49.346678+00:00Z",
+    "duration_seconds": 55.03,
+    "sites_scraped": 73,
+    "results_collected": 60,
+    "failed_results": 8,
+    "scrape_modes": [
+      "home_fetch",
+      "crawl"
+    ]
+  },
+  {
+    "scrape_start": "2025-10-03T20:40:56.295390+00:00Z",
+    "scrape_end": "2025-10-03T20:41:54.363208+00:00Z",
+    "duration_seconds": 58.07,
+    "sites_scraped": 73,
+    "results_collected": 62,
+    "failed_results": 0,
+    "scrape_modes": [
+      "home_fetch",
+      "crawl"
+    ]
+  },
+  {
+    "scrape_start": "2025-10-03T20:55:57.985535+00:00Z",
+    "scrape_end": "2025-10-03T20:57:11.307182+00:00Z",
+    "duration_seconds": 73.32,
+    "sites_scraped": 74,
+    "results_collected": 64,
+    "failed_results": 3,
+    "scrape_modes": [
+      "home_fetch",
+      "crawl"
+    ]
+  },
+  {
+    "scrape_start": "2025-10-03T21:18:40.579850+00:00Z",
+    "scrape_end": "2025-10-03T21:19:59.434958+00:00Z",
+    "duration_seconds": 78.86,
+    "sites_scraped": 78,
+    "results_collected": 116,
+    "failed_results": 5,
+    "scrape_modes": [
+      "home_fetch",
+      "crawl"
+    ]
   }
 ]
