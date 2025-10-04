@@ -9,6 +9,7 @@ HEADERS = {
     ),
     "Accept-Language": "en-US,en;q=0.9",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Referer": "https://www.google.com/",
     "Connection": "keep-alive",
 }
 
@@ -24,7 +25,7 @@ def home_fetch(site_config , keywords):
 
     try:
         print("[DEBUG] Fetching Home for",base_url)
-        response = session.get(base_url ,timeout=20)
+        response = session.get(base_url ,timeout=10)
         response.raise_for_status()
     except requests.RequestException as e:
         print(f"[ERROR] Request failed for {base_url}: {e}")

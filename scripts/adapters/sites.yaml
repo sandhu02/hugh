@@ -939,11 +939,11 @@ Food & Drink Business:
   urls:
     - https://www.foodanddrinkbusiness.com.au/   
   selectors:
-    item: "div.landing-card"
+    item: "div.landing-"
     title: ".landing-card-title h3 a"
     url: ".landing-card-title h3 a::attr(href)"
     date: ".landing-card-footer span.text-hint"
-    image: ".landing-card-inner img::attr(src), .landing-card-img img::attr(src)"
+    image: ".landing-card-inner img::attr(src),"
     description: ".landing-card-inner p:not(:has(img))"
    
 
@@ -1151,11 +1151,11 @@ Aged Care Insite:
     author: "a.author-name"
   
 # This site can’t be reached
-# Australian Health Journal:
-#   modes: [home_fetch]
-#   urls: 
-#     - https://www.theaustralianhealthjournal.com.au/
-
+Australian Health Journal:
+  modes: [home_fetch]
+  urls: 
+    - https://www.theaustralianhealthjournal.com.au/
+  
 PharmaDispatch:
   modes: [home_fetch]
   urls: 
