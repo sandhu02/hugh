@@ -1,11 +1,8 @@
 How to run:
 1. Clone Project 
 2. Add these environment variables in ./dashboard/api/.env
-  # OpenAI Configuration
-  OPENAI_API_KEY=
-  # Database Configuration
+  OPENAI_API_KEY=your_openai_api_key
   DATABASE_URL=sqlite:///scraper.db
-  # Flask Configuration
   FLASK_ENV=development
   FLASK_DEBUG=True
 
